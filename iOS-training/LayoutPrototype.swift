@@ -9,7 +9,7 @@ import SwiftUI
 import YumemiWeather
 
 struct LayoutPrototype: View {
-    @State var fetchedWeather: Weather? = nil
+    @State private var fetchedWeather: Weather?
 
     var body: some View {
         GeometryReader { geometry in
@@ -19,30 +19,11 @@ struct LayoutPrototype: View {
             let buttonWidth = geometry.size.width / 4
 
             VStack(alignment: .center, spacing: .zero) {
-                switch fetchedWeather {
-                case .sunny:
-                    Image(.iconsun)
+                if let fetchedWeather {
+                    fetchedWeather.icon
                         .resizable()
                         .scaledToFit()
-                        .foregroundStyle(.red)
-                        .frame(width: imageSideLength, height: imageSideLength)
-                case .cloudy:
-                    Image(.iconclouds)
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(.gray)
-                        .frame(width: imageSideLength, height: imageSideLength)
-                case .rainy:
-                    Image(.iconumbrella)
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(.blue)
-                        .frame(width: imageSideLength, height: imageSideLength)
-                case .none:
-                    Image(systemName: "exclamationmark.square.fill")
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(.gray)
+                        .foregroundStyle(fetchedWeather.color)
                         .frame(width: imageSideLength, height: imageSideLength)
                 }
 
@@ -87,4 +68,26 @@ enum Weather {
     case sunny
     case cloudy
     case rainy
+
+    var icon: Image {
+        switch self {
+        case .sunny:
+            return Image(.iconsun)
+        case .cloudy:
+            return Image(.iconclouds)
+        case .rainy:
+            return Image(.iconumbrella)
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .sunny:
+            return .red
+        case .cloudy:
+            return .gray
+        case .rainy:
+            return .blue
+        }
+    }
 }
