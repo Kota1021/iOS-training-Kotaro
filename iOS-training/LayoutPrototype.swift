@@ -9,8 +9,9 @@ import SwiftUI
 import YumemiWeather
 
 struct LayoutPrototype: View {
-    @State private var fetchedWeather: Weather?
-
+    @State private var fetchedWeather:Weather?
+    @State private var errorDuringFetch:YumemiWeatherError?
+    
     var body: some View {
         GeometryReader { geometry in
 
@@ -57,6 +58,14 @@ struct LayoutPrototype: View {
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
+                .alert("Error", isPresented: .constant(errorDuringFetch != nil)) {
+                    Button("OK"){ errorDuringFetch = nil }
+                } message: {
+                    Text(errorDuringFetch?.localizedDescription ?? "")
+                }
+                
+            
+      
     }
 }
 
