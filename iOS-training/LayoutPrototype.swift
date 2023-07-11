@@ -9,9 +9,18 @@ import SwiftUI
 import YumemiWeather
 
 struct LayoutPrototype: View {
-    @State private var fetchedWeather:Weather?
-    @State private var errorDuringFetch:YumemiWeatherError?
-    
+    @State private var weatherFetchResult: WeatherFetchResult?
+
+    var errorAlertIsPresented: Bool {
+        if let weatherFetchResult,
+           case WeatherFetchResult.failure = weatherFetchResult
+        {
+            return true
+        } else {
+            return false
+        }
+    }
+
     var body: some View {
         GeometryReader { geometry in
 
@@ -20,12 +29,25 @@ struct LayoutPrototype: View {
             let buttonWidth = geometry.size.width / 4
 
             VStack(alignment: .center, spacing: .zero) {
-                if let fetchedWeather {
-                    fetchedWeather.icon
+                if let weatherFetchResult,
+                   case let WeatherFetchResult.success(weather) = weatherFetchResult
+                {
+                    weather.icon
                         .resizable()
                         .scaledToFit()
-                        .foregroundStyle(fetchedWeather.color)
-                        .frame(width: imageSideLength, height: imageSideLength)
+                        .foregroundStyle(weather.color)
+                        .frame(width: imageSideLength,
+                               height: imageSideLength)
+
+                } else if let weatherFetchResult,
+                          case WeatherFetchResult.failure = weatherFetchResult
+                {
+                    Image(systemName: "exclamationmark.square.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundStyle(.gray)
+                        .frame(width: imageSideLength,
+                               height: imageSideLength)
                 }
 
                 HStack(spacing: .zero) {
@@ -42,30 +64,42 @@ struct LayoutPrototype: View {
                     Button("Close") {}
                         .frame(width: buttonWidth)
                     Button("Reload") {
-                        let weather = YumemiWeather.fetchWeatherCondition()
-                        // FIXME: Swift5.9からswitchで値を返せるはずだが、以下のようにクロージャで囲わないとビルドはできてもプレビューでCommand SwiftCompile failed...とエラー発生
-                        fetchedWeather = {
-                            switch weather {
-                            case "sunny": .sunny
-                            case "cloudy": .cloudy
-                            case "rainy": .rainy
-                            default: fatalError("invalid weather: \(weather)")
-                            }
-                        }()
+                        weatherFetchResult = self.fetchWeatherCondition(at: "tokyo")
                     }
                     .frame(width: buttonWidth)
                 }
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
-                .alert("Error", isPresented: .constant(errorDuringFetch != nil)) {
-                    Button("OK"){ errorDuringFetch = nil }
-                } message: {
-                    Text(errorDuringFetch?.localizedDescription ?? "")
-                }
-                
-            
-      
+        .alert("Error", isPresented: .constant(errorAlertIsPresented)) { /* Buttons */ } message: {
+            if let weatherFetchResult,
+               case let WeatherFetchResult.failure(errorDuringFetch) = weatherFetchResult
+            {
+                Text(errorDuringFetch.localizedDescription)
+            } else {
+                EmptyView()
+            }
+        }
+    }
+
+    func fetchWeatherCondition(at area: String) -> WeatherFetchResult {
+        do {
+            let weather: String = try YumemiWeather.fetchWeatherCondition(at: area)
+
+            switch weather {
+            case "sunny":
+                return .success(.sunny)
+            case "cloudy":
+                return .success(.cloudy)
+            case "rainy":
+                return .success(.rainy)
+            default: fatalError("LayoutPrototype: fetchWeatherCondition() returned an unintended weather of \(weather)")
+            }
+
+        } catch {
+            let errorDuringFetch = error as! YumemiWeatherError
+            return WeatherFetchResult.failure(errorDuringFetch)
+        }
     }
 }
 
@@ -99,4 +133,9 @@ enum Weather {
             return .blue
         }
     }
+}
+
+enum WeatherFetchResult {
+    case success(Weather)
+    case failure(YumemiWeatherError)
 }
