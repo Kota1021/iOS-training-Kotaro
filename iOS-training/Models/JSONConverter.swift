@@ -56,3 +56,7 @@ extension WeatherDateTemperature: Decodable{
 //} catch {
 //    print(error.localizedDescription)
 //}
+
+
+
+
