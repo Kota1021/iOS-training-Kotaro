@@ -96,9 +96,10 @@ struct LayoutPrototype: View {
             default: fatalError("LayoutPrototype: fetchWeatherCondition() returned an unintended weather of \(weather)")
             }
 
+        } catch let error as YumemiWeatherError {
+            return WeatherFetchResult.failure(error)
         } catch {
-            let errorDuringFetch = error as! YumemiWeatherError
-            return WeatherFetchResult.failure(errorDuringFetch)
+            fatalError("LayoutPrototype: fetchWeatherCondition(at:) returned invalid error \(error)")
         }
     }
 }
