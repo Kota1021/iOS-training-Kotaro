@@ -101,10 +101,10 @@ struct LayoutPrototype: View {
     LayoutPrototype()
 }
 
-enum Weather {
-    case sunny
-    case cloudy
-    case rainy
+enum Weather: String, Decodable {
+    case sunny = "sunny"
+    case cloudy = "cloudy"
+    case rainy = "rainy"
 
     var icon: Image {
         switch self {
