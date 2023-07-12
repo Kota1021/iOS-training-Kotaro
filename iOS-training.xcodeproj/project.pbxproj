@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		350AC30C2A5BD500002A894B /* LayoutPrototype.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350AC30B2A5BD500002A894B /* LayoutPrototype.swift */; };
+		3510B2BF2A5E68EB00ADAD10 /* YumemiWeather in Frameworks */ = {isa = PBXBuildFile; productRef = 3510B2BE2A5E68EB00ADAD10 /* YumemiWeather */; };
 		353A7C312A5D33840038391A /* SwiftFormat in Frameworks */ = {isa = PBXBuildFile; productRef = 353A7C302A5D33840038391A /* SwiftFormat */; };
 		35DB58D22A5BB42900EFF284 /* iOS_trainingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DB58D12A5BB42900EFF284 /* iOS_trainingApp.swift */; };
 		35DB58D42A5BB42900EFF284 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DB58D32A5BB42900EFF284 /* ContentView.swift */; };
@@ -55,6 +56,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				353A7C312A5D33840038391A /* SwiftFormat in Frameworks */,
+				3510B2BF2A5E68EB00ADAD10 /* YumemiWeather in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,6 +152,7 @@
 			name = "iOS-training";
 			packageProductDependencies = (
 				353A7C302A5D33840038391A /* SwiftFormat */,
+				3510B2BE2A5E68EB00ADAD10 /* YumemiWeather */,
 			);
 			productName = "iOS-training";
 			productReference = 35DB58CE2A5BB42900EFF284 /* iOS-training.app */;
@@ -225,6 +228,7 @@
 			mainGroup = 35DB58C52A5BB42900EFF284;
 			packageReferences = (
 				353A7C2F2A5D33840038391A /* XCRemoteSwiftPackageReference "SwiftFormat" */,
+				3510B2BD2A5E68EB00ADAD10 /* XCRemoteSwiftPackageReference "ios-training" */,
 			);
 			productRefGroup = 35DB58CF2A5BB42900EFF284 /* Products */;
 			projectDirPath = "";
@@ -596,6 +600,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		3510B2BD2A5E68EB00ADAD10 /* XCRemoteSwiftPackageReference "ios-training" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/yumemi-inc/ios-training.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		353A7C2F2A5D33840038391A /* XCRemoteSwiftPackageReference "SwiftFormat" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/nicklockwood/SwiftFormat.git";
@@ -607,6 +619,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		3510B2BE2A5E68EB00ADAD10 /* YumemiWeather */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3510B2BD2A5E68EB00ADAD10 /* XCRemoteSwiftPackageReference "ios-training" */;
+			productName = YumemiWeather;
+		};
 		353A7C302A5D33840038391A /* SwiftFormat */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 353A7C2F2A5D33840038391A /* XCRemoteSwiftPackageReference "SwiftFormat" */;
