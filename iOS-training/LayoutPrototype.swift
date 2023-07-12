@@ -9,7 +9,7 @@ import SwiftUI
 import YumemiWeather
 
 struct LayoutPrototype: View {
-    @State private var weatherFetchResult: Result<Weather, Error>?
+    @State private var weatherFetchResult: Result<WeatherDateTemperature, Error>?
 
     var errorAlertIsPresented: Bool {
         switch weatherFetchResult {
@@ -31,11 +31,11 @@ struct LayoutPrototype: View {
                 switch weatherFetchResult {
                 case .none:
                     EmptyView()
-                case let .success(weather):
-                    weather.icon
+                case .success(let weatherDateTemperature):
+                    weatherDateTemperature.weatherCondition.icon
                         .resizable()
                         .scaledToFit()
-                        .foregroundStyle(weather.color)
+                        .foregroundStyle(weatherDateTemperature.weatherCondition.color)
                         .frame(width: imageSideLength,
                                height: imageSideLength)
                 case .failure:
@@ -61,6 +61,7 @@ struct LayoutPrototype: View {
                     Button("Close") {}
                         .frame(width: buttonWidth)
                     Button("Reload") {
+                        print("reload tapped")
                         weatherFetchResult = self.fetchWeatherCondition(at: "tokyo")
                     }
                     .frame(width: buttonWidth)
@@ -80,19 +81,37 @@ struct LayoutPrototype: View {
         }
     }
 
-    func fetchWeatherCondition(at area: String) -> Result<Weather, Error> {
-        let fetchedResult = Result<String, Error> { try YumemiWeather.fetchWeatherCondition(at: area) }
-        return fetchedResult.flatMap { weather in
-            switch weather {
-            case "sunny":
-                return .success(.sunny)
-            case "cloudy":
-                return .success(.cloudy)
-            case "rainy":
-                return .success(.rainy)
-            default:
-                return .failure(YumemiWeatherError.unknownError)
-            }
+    func fetchWeatherCondition(at area: String) -> Result<WeatherDateTemperature, Error> {
+        print("fetchWeatherCondition called")
+        do {
+            //MARK: Encoding into JSON
+            let areaDate = AreaDate(area: area, date: Date())
+            let encoder: JSONEncoder = JSONEncoder()
+            //FIXME: ISO8601をハードコーディングするのは気持ち悪い
+            //しかし、dateEncodingStrategyでiso8601を指定すると最後にzが着く
+            //c.f. https://qiita.com/m__ike_/items/81d84465bb4b9c470131
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+            encoder.dateEncodingStrategy = .formatted(formatter)
+            let areaDateJSON = try encoder.encode(areaDate)
+            let areaDateJSONString = String(data: areaDateJSON, encoding: .utf8)!
+            
+            //MARK: Decoding from JSON
+            let fetchedWeatherJSONString = try YumemiWeather.fetchWeather(areaDateJSONString)
+            let fetchedWeatherJSON = fetchedWeatherJSONString.data(using: .utf8)!
+            
+            let decoder: JSONDecoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            let weatherDateTemperature = try decoder.decode(WeatherDateTemperature.self, from: fetchedWeatherJSON)
+            print("decoded")
+            return .success(weatherDateTemperature)
+
+        } catch let error as YumemiWeatherError {
+            print("returned YumemiWeatherError")
+            return .failure(error)
+        } catch {
+            print("returned Error")
+            fatalError("LayoutPrototype: fetchWeatherCondition(at:) returned invalid error \(error)")
         }
     }
 }

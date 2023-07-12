@@ -23,7 +23,6 @@ struct AreaDate{
 
 extension AreaDate: Encodable{}
 
-
 //MARK: -output
 struct WeatherDateTemperature{
 //    Example

@@ -37,6 +37,6 @@ enum Weather: String, Decodable {
 }
 
 enum WeatherFetchResult {
-    case success(Weather)
+    case success(WeatherDateTemperature)
     case failure(YumemiWeatherError)
 }
