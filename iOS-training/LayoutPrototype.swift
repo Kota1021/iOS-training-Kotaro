@@ -11,14 +11,33 @@ import YumemiWeather
 struct LayoutPrototype: View {
     @State private var weatherFetchResult: Result<WeatherDateTemperature, Error>?
 
-    var errorAlertIsPresented: Bool {
-        switch weatherFetchResult {
-        case .failure:
-            return true
+    var weatherInfo:WeatherDateTemperature?{
+        switch weatherFetchResult{
+        case .success(let weatherDateTemperature):
+            return weatherDateTemperature
         default:
-            return false
+            return nil
         }
     }
+    
+    var error:Error?{
+        switch weatherFetchResult{
+        case .failure(let error):
+            return error
+        default:
+            return nil
+        }
+    }
+//    var errorAlertIsPresented: Bool {
+//        switch weatherFetchResult {
+//        case .none:
+//            return false
+//        case .success:
+//            return false
+//        case .failure:
+//            return true
+//        }
+//    }
 
     var body: some View {
         GeometryReader { geometry in
@@ -28,17 +47,14 @@ struct LayoutPrototype: View {
             let buttonWidth = geometry.size.width / 4
 
             VStack(alignment: .center, spacing: .zero) {
-                switch weatherFetchResult {
-                case .none:
-                    EmptyView()
-                case .success(let weatherDateTemperature):
-                    weatherDateTemperature.weatherCondition.icon
+                if let weatherInfo{
+                    weatherInfo.weatherCondition.icon
                         .resizable()
                         .scaledToFit()
-                        .foregroundStyle(weatherDateTemperature.weatherCondition.color)
+                        .foregroundStyle(weatherInfo.weatherCondition.color)
                         .frame(width: imageSideLength,
                                height: imageSideLength)
-                case .failure:
+                }else{
                     Image(systemName: "exclamationmark.square.fill")
                         .resizable()
                         .scaledToFit()
@@ -48,10 +64,10 @@ struct LayoutPrototype: View {
                 }
 
                 HStack(spacing: .zero) {
-                    Text("--")
+                    Text(weatherInfo != nil ?  "\(weatherInfo!.minTemperature)" : "--" )
                         .foregroundStyle(.blue)
                         .frame(width: temperatureWidth)
-                    Text("--")
+                    Text(weatherInfo != nil ?  "\(weatherInfo!.maxTemperature)" : "--" )
                         .foregroundStyle(.red)
                         .frame(width: temperatureWidth)
                 }
@@ -62,7 +78,7 @@ struct LayoutPrototype: View {
                         .frame(width: buttonWidth)
                     Button("Reload") {
                         print("reload tapped")
-                        weatherFetchResult = self.fetchWeatherCondition(at: "tokyo")
+                        weatherFetchResult = self.fetchWeatherCondition(in: "tokyo",at:Date())
                     }
                     .frame(width: buttonWidth)
                 }
@@ -70,7 +86,7 @@ struct LayoutPrototype: View {
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
         .alert("Error", isPresented: Binding(
-            get: { errorAlertIsPresented },
+            get: { error != nil },
             set: { isPresented in
                 if !isPresented { weatherFetchResult = nil }
             }
@@ -81,11 +97,11 @@ struct LayoutPrototype: View {
         }
     }
 
-    func fetchWeatherCondition(at area: String) -> Result<WeatherDateTemperature, Error> {
+    func fetchWeatherCondition(in area: String, at date:Date) -> Result<WeatherDateTemperature, Error>? {
         print("fetchWeatherCondition called")
         do {
             //MARK: Encoding into JSON
-            let areaDate = AreaDate(area: area, date: Date())
+            let areaDate = AreaDate(area: area, date: date)
             let encoder: JSONEncoder = JSONEncoder()
             //FIXME: ISO8601をハードコーディングするのは気持ち悪い
             //しかし、dateEncodingStrategyでiso8601を指定すると最後にzが着く
@@ -95,7 +111,6 @@ struct LayoutPrototype: View {
             encoder.dateEncodingStrategy = .formatted(formatter)
             let areaDateJSON = try encoder.encode(areaDate)
             let areaDateJSONString = String(data: areaDateJSON, encoding: .utf8)!
-            
             //MARK: Decoding from JSON
             let fetchedWeatherJSONString = try YumemiWeather.fetchWeather(areaDateJSONString)
             let fetchedWeatherJSON = fetchedWeatherJSONString.data(using: .utf8)!
