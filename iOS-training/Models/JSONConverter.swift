@@ -20,10 +20,26 @@ struct AreaDate{
     let area: String
     let date: Date
 }
-
 extension AreaDate: Encodable{}
 
+func generateJSONStringFromAreaDate(_ areaDate: AreaDate)->String{
+    let encoder: JSONEncoder = JSONEncoder()
+    //FIXME: ISO8601をハードコーディングするのは気持ち悪い
+    //しかし、dateEncodingStrategyでiso8601を指定すると最後にzが着く
+    //c.f. https://qiita.com/m__ike_/items/81d84465bb4b9c470131
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+    encoder.dateEncodingStrategy = .formatted(formatter)
+    do{
+        let areaDateJSON = try encoder.encode(areaDate)
+        return String(data: areaDateJSON, encoding: .utf8)!
+    }catch{
+        fatalError("failed during generating areaDate \(error)")
+    }
+}
+
 //MARK: -output
+
 struct WeatherDateTemperature{
 //    Example
 //    {
@@ -46,6 +62,8 @@ extension WeatherDateTemperature: Decodable{
         case weatherCondition = "weather_condition"
     }
 }
+
+//MARK: for testing
 
 //let decoder: JSONDecoder = JSONDecoder()
 //decoder.dateDecodingStrategy = .iso8601
