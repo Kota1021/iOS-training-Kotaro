@@ -90,7 +90,7 @@ struct LayoutPrototype: View {
     func fetchWeatherCondition(at area: String) -> Result<Weather, Error> {
         let fetchedResult = Result<String, Error> { try YumemiWeather.fetchWeatherCondition(at: area) }
         return fetchedResult.flatMap { weather in
-            switch weather{
+            switch weather {
             case "sunny":
                 return .success(.sunny)
             case "cloudy":
@@ -100,7 +100,6 @@ struct LayoutPrototype: View {
             default:
                 return .failure(YumemiWeatherError.unknownError)
             }
-
         }
     }
 }
