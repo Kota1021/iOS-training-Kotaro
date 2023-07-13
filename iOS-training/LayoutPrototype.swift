@@ -37,11 +37,11 @@ struct LayoutPrototype: View {
             let buttonWidth = geometry.size.width / 4
 
             VStack(alignment: .center, spacing: .zero) {
-                if let weatherInfo {
-                    weatherInfo.weatherCondition.icon
+                if let weatherCondition = weatherInfo?.weatherCondition {
+                    weatherCondition.icon
                         .resizable()
                         .scaledToFit()
-                        .foregroundStyle(weatherInfo.weatherCondition.color)
+                        .foregroundStyle(weatherCondition.color)
                         .frame(width: imageSideLength,
                                height: imageSideLength)
                 } else {
