@@ -9,15 +9,16 @@ import SwiftUI
 import YumemiWeather
 
 struct LayoutPrototype: View {
-    @State private var weatherFetchResult: WeatherFetchResult?
+    @State private var weatherFetchResult: Result<Weather,YumemiWeatherError>?
 
     var errorAlertIsPresented: Bool {
-        if let weatherFetchResult,
-           case WeatherFetchResult.failure = weatherFetchResult
-        {
-            return true
-        } else {
+        switch weatherFetchResult {
+        case .none:
             return false
+        case .success(_):
+            return false
+        case .failure(_):
+            return true
         }
     }
 
@@ -29,19 +30,18 @@ struct LayoutPrototype: View {
             let buttonWidth = geometry.size.width / 4
 
             VStack(alignment: .center, spacing: .zero) {
-                if let weatherFetchResult,
-                   case let WeatherFetchResult.success(weather) = weatherFetchResult
-                {
+                
+                switch weatherFetchResult {
+                case .none:
+                    EmptyView()
+                case .success(let weather):
                     weather.icon
                         .resizable()
                         .scaledToFit()
                         .foregroundStyle(weather.color)
                         .frame(width: imageSideLength,
                                height: imageSideLength)
-
-                } else if let weatherFetchResult,
-                          case WeatherFetchResult.failure = weatherFetchResult
-                {
+                case .failure(_):
                     Image(systemName: "exclamationmark.square.fill")
                         .resizable()
                         .scaledToFit()
@@ -78,17 +78,18 @@ struct LayoutPrototype: View {
                                         }
                                         )
                 ) { /* Buttons */ } message: {
-            if let weatherFetchResult,
-               case let WeatherFetchResult.failure(errorDuringFetch) = weatherFetchResult
-            {
-                Text(errorDuringFetch.localizedDescription)
-            } else {
+            switch weatherFetchResult {
+            case .none:
                 EmptyView()
+            case .success(_):
+                EmptyView()
+            case .failure(let errorDuringFetch):
+                Text(errorDuringFetch.localizedDescription)
             }
         }
     }
 
-    func fetchWeatherCondition(at area: String) -> WeatherFetchResult {
+    func fetchWeatherCondition(at area: String) -> Result<Weather,YumemiWeatherError> {
         do {
             let weather: String = try YumemiWeather.fetchWeatherCondition(at: area)
 
@@ -103,7 +104,7 @@ struct LayoutPrototype: View {
             }
 
         } catch let error as YumemiWeatherError {
-            return WeatherFetchResult.failure(error)
+            return .failure(error)
         } catch {
             fatalError("LayoutPrototype: fetchWeatherCondition(at:) returned invalid error \(error)")
         }
@@ -140,9 +141,4 @@ enum Weather {
             return .blue
         }
     }
-}
-
-enum WeatherFetchResult {
-    case success(Weather)
-    case failure(YumemiWeatherError)
 }
