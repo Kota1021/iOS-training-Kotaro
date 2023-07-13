@@ -9,7 +9,7 @@ import SwiftUI
 import YumemiWeather
 
 struct LayoutPrototype: View {
-    @State private var weatherFetchResult: Result<Weather,YumemiWeatherError>?
+    @State private var weatherFetchResult: Result<Weather,Error>?
 
     var errorAlertIsPresented: Bool {
         switch weatherFetchResult {
@@ -89,24 +89,23 @@ struct LayoutPrototype: View {
         }
     }
 
-    func fetchWeatherCondition(at area: String) -> Result<Weather,YumemiWeatherError> {
-        do {
-            let weather: String = try YumemiWeather.fetchWeatherCondition(at: area)
-
-            switch weather {
+    func fetchWeatherCondition(at area: String) -> Result<Weather,Error> {
+        let fetchedResult = Result<String, Error>{ try YumemiWeather.fetchWeatherCondition(at: area)}
+        
+        switch fetchedResult{
+        case .success(let weatherString):
+            switch weatherString {
             case "sunny":
                 return .success(.sunny)
             case "cloudy":
                 return .success(.cloudy)
             case "rainy":
                 return .success(.rainy)
-            default: fatalError("LayoutPrototype: fetchWeatherCondition() returned an unintended weather of \(weather)")
+            default: fatalError("LayoutPrototype: fetchWeatherCondition() returned an unintended weather of \(weatherString)")
             }
-
-        } catch let error as YumemiWeatherError {
+            
+        case .failure(let error):
             return .failure(error)
-        } catch {
-            fatalError("LayoutPrototype: fetchWeatherCondition(at:) returned invalid error \(error)")
         }
     }
 }
