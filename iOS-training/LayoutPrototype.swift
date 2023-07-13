@@ -72,10 +72,10 @@ struct LayoutPrototype: View {
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
         .alert("Error", isPresented: Binding(
-                                        get: { errorAlertIsPresented },
-                                        set: { isPresented in
-                                            if !isPresented{ weatherFetchResult = nil }
-                                        }
+                                            get: { errorAlertIsPresented },
+                                            set: { isPresented in
+                                                if !isPresented{ weatherFetchResult = nil }
+                                            }
                                         )
                 ) { /* Buttons */ } message: {
             switch weatherFetchResult {
@@ -101,7 +101,8 @@ struct LayoutPrototype: View {
                 return .success(.cloudy)
             case "rainy":
                 return .success(.rainy)
-            default: fatalError("LayoutPrototype: fetchWeatherCondition() returned an unintended weather of \(weatherString)")
+            default:
+                return .failure(YumemiWeatherError.unknownError)
             }
             
         case .failure(let error):
