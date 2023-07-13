@@ -34,14 +34,14 @@ struct WeatherAPIClient {
     }
 }
 
-
-//----------------------
+// ----------------------
 extension WeatherAPIClient {
     // MARK: Below JSON related
+
     // c.f. https://medium.com/@bj1024/swift4-codable-json-encode-17eaa95372d1
-    
+
     // MARK: - input
-    
+
     private struct AreaDate: Encodable {
         //    Example
         //    {
@@ -51,6 +51,7 @@ extension WeatherAPIClient {
         let area: String
         let date: Date
     }
+
     private func generateJSONStringFromAreaDate(_ areaDate: AreaDate) -> String {
         let encoder = JSONEncoder()
         // FIXME: ISO8601をハードコーディングするのは気持ち悪い
@@ -66,9 +67,9 @@ extension WeatherAPIClient {
             fatalError("failed during generating areaDate \(error)")
         }
     }
-    
+
     // MARK: - output
-    
+
     private func generateWeatherDateTemperatureFrom(json: String) -> WeatherDateTemperature {
         let fetchedWeatherJSON = json.data(using: .utf8)!
         let decoder = JSONDecoder()
@@ -80,7 +81,7 @@ extension WeatherAPIClient {
             fatalError("failed during decoding json \(error)")
         }
     }
-    
+
     public struct WeatherDateTemperature: Decodable {
         //    Example
         //    {
@@ -93,7 +94,7 @@ extension WeatherAPIClient {
         let date: Date // ISO 8601
         let minTemperature: Int
         let weatherCondition: Weather
-        
+
         enum CodingKeys: String, CodingKey {
             case maxTemperature = "max_temperature"
             case date
@@ -101,9 +102,9 @@ extension WeatherAPIClient {
             case weatherCondition = "weather_condition"
         }
     }
-    
+
     // MARK: for testing
-    
+
     // let decoder: JSONDecoder = JSONDecoder()
     // decoder.dateDecodingStrategy = .iso8601
     // do {
@@ -112,5 +113,4 @@ extension WeatherAPIClient {
     // } catch {
     //    print(error.localizedDescription)
     // }
-    
 }
