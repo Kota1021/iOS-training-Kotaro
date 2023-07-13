@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import YumemiWeather
 
 enum Weather: String, Decodable {
     case sunny
