@@ -24,12 +24,9 @@ struct WeatherAPIClient {
 
             return .success(weatherDateTemperature)
 
-        } catch let error as YumemiWeatherError {
-            print("returned YumemiWeatherError")
-            return .failure(error)
         } catch {
-            print("returned Error")
-            fatalError("LayoutPrototype: fetchWeatherCondition(at:) returned error \(error)")
+            print("fetchWeather returned an error \(error)")
+            return .failure(error)
         }
     }
 }
