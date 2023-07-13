@@ -12,13 +12,10 @@ struct LayoutPrototype: View {
     @State private var weatherFetchResult: Result<Weather, Error>?
 
     var errorAlertIsPresented: Bool {
-        switch weatherFetchResult {
-        case .none:
-            return false
-        case .success:
-            return false
-        case .failure:
+        if case .failure = weatherFetchResult {
             return true
+        } else {
+            return false
         }
     }
 
@@ -76,13 +73,8 @@ struct LayoutPrototype: View {
                 if !isPresented { weatherFetchResult = nil }
             }
         )) { /* Buttons */ } message: {
-            switch weatherFetchResult {
-            case .none:
-                EmptyView()
-            case .success:
-                EmptyView()
-            case let .failure(errorDuringFetch):
-                Text(errorDuringFetch.localizedDescription)
+            if case .failure(let error) = weatherFetchResult {
+                Text(error.localizedDescription)
             }
         }
     }
