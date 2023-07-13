@@ -9,9 +9,9 @@ import SwiftUI
 import YumemiWeather
 
 enum Weather: String, Decodable {
-    case sunny = "sunny"
-    case cloudy = "cloudy"
-    case rainy = "rainy"
+    case sunny
+    case cloudy
+    case rainy
 
     var icon: Image {
         switch self {

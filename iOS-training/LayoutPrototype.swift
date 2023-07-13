@@ -11,9 +11,9 @@ import YumemiWeather
 struct LayoutPrototype: View {
     @State private var weatherFetchResult: Result<WeatherDateTemperature, Error>?
 
-    var weatherInfo:WeatherDateTemperature?{
-        switch weatherFetchResult{
-        case .success(let weatherDateTemperature):
+    var weatherInfo: WeatherDateTemperature? {
+        switch weatherFetchResult {
+        case let .success(weatherDateTemperature):
             return weatherDateTemperature
         default:
             return nil
@@ -37,14 +37,14 @@ struct LayoutPrototype: View {
             let buttonWidth = geometry.size.width / 4
 
             VStack(alignment: .center, spacing: .zero) {
-                if let weatherInfo{
+                if let weatherInfo {
                     weatherInfo.weatherCondition.icon
                         .resizable()
                         .scaledToFit()
                         .foregroundStyle(weatherInfo.weatherCondition.color)
                         .frame(width: imageSideLength,
                                height: imageSideLength)
-                }else{
+                } else {
                     Image(systemName: "exclamationmark.square.fill")
                         .resizable()
                         .scaledToFit()
@@ -54,10 +54,10 @@ struct LayoutPrototype: View {
                 }
 
                 HStack(spacing: .zero) {
-                    Text(weatherInfo != nil ?  "\(weatherInfo!.minTemperature)" : "--" )
+                    Text(weatherInfo != nil ? "\(weatherInfo!.minTemperature)" : "--")
                         .foregroundStyle(.blue)
                         .frame(width: temperatureWidth)
-                    Text(weatherInfo != nil ?  "\(weatherInfo!.maxTemperature)" : "--" )
+                    Text(weatherInfo != nil ? "\(weatherInfo!.maxTemperature)" : "--")
                         .foregroundStyle(.red)
                         .frame(width: temperatureWidth)
                 }
@@ -68,7 +68,7 @@ struct LayoutPrototype: View {
                         .frame(width: buttonWidth)
                     Button("Reload") {
                         print("reload tapped")
-                        weatherFetchResult = self.fetchWeatherCondition(in: "tokyo",at:Date())
+                        weatherFetchResult = self.fetchWeatherCondition(in: "tokyo", at: Date())
                     }
                     .frame(width: buttonWidth)
                 }
@@ -87,17 +87,19 @@ struct LayoutPrototype: View {
         }
     }
 
-    func fetchWeatherCondition(in area: String, at date:Date) -> Result<WeatherDateTemperature, Error>? {
+    func fetchWeatherCondition(in area: String, at date: Date) -> Result<WeatherDateTemperature, Error>? {
         print("fetchWeatherCondition called")
         do {
-            //MARK: Encoding into input JSON String
+            // MARK: Encoding into input JSON String
+
             let areaDate = AreaDate(area: area, date: date)
             let areaDateJSONString = generateJSONStringFromAreaDate(areaDate)
-            
-            //MARK: Decoding from output JSON String
+
+            // MARK: Decoding from output JSON String
+
             let fetchedWeatherJSONString = try YumemiWeather.fetchWeather(areaDateJSONString)
             let weatherDateTemperature = generateWeatherDateTemperatureFrom(json: fetchedWeatherJSONString)
-            
+
             return .success(weatherDateTemperature)
 
         } catch let error as YumemiWeatherError {
