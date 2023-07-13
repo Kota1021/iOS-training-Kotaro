@@ -73,7 +73,7 @@ struct LayoutPrototype: View {
                 if !isPresented { weatherFetchResult = nil }
             }
         )) { /* Buttons */ } message: {
-            if case .failure(let error) = weatherFetchResult {
+            if case let .failure(error) = weatherFetchResult {
                 Text(error.localizedDescription)
             }
         }
