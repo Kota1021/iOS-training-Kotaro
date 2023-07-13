@@ -40,6 +40,18 @@ func generateJSONStringFromAreaDate(_ areaDate: AreaDate)->String{
 
 //MARK: -output
 
+func generateWeatherDateTemperatureFrom(json: String)->WeatherDateTemperature{
+    let fetchedWeatherJSON = json.data(using: .utf8)!
+    let decoder: JSONDecoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .iso8601
+    do{
+        let weatherDateTemperature = try decoder.decode(WeatherDateTemperature.self, from: fetchedWeatherJSON)
+        return weatherDateTemperature
+    }catch{
+        fatalError("failed during decoding json \(error)")
+    }
+}
+
 struct WeatherDateTemperature{
 //    Example
 //    {

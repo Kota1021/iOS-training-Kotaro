@@ -100,17 +100,14 @@ struct LayoutPrototype: View {
     func fetchWeatherCondition(in area: String, at date:Date) -> Result<WeatherDateTemperature, Error>? {
         print("fetchWeatherCondition called")
         do {
+            //MARK: Encoding into input JSON String
             let areaDate = AreaDate(area: area, date: date)
             let areaDateJSONString = generateJSONStringFromAreaDate(areaDate)
             
-            //MARK: Decoding from JSON
+            //MARK: Decoding from output JSON String
             let fetchedWeatherJSONString = try YumemiWeather.fetchWeather(areaDateJSONString)
-            let fetchedWeatherJSON = fetchedWeatherJSONString.data(using: .utf8)!
+            let weatherDateTemperature = generateWeatherDateTemperatureFrom(json: fetchedWeatherJSONString)
             
-            let decoder: JSONDecoder = JSONDecoder()
-            decoder.dateDecodingStrategy = .iso8601
-            let weatherDateTemperature = try decoder.decode(WeatherDateTemperature.self, from: fetchedWeatherJSON)
-            print("decoded")
             return .success(weatherDateTemperature)
 
         } catch let error as YumemiWeatherError {
