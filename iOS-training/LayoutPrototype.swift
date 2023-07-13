@@ -6,9 +6,9 @@
 //
 
 import SwiftUI
-import YumemiWeather
 
 struct LayoutPrototype: View {
+    let weatherAPI = WeatherAPIClient()
     @State private var weatherFetchResult: Result<WeatherDateTemperature, Error>?
 
     var weatherInfo: WeatherDateTemperature? {
@@ -68,7 +68,7 @@ struct LayoutPrototype: View {
                         .frame(width: buttonWidth)
                     Button("Reload") {
                         print("reload tapped")
-                        weatherFetchResult = self.fetchWeatherCondition(in: "tokyo", at: Date())
+                        weatherFetchResult = weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date())
                     }
                     .frame(width: buttonWidth)
                 }
@@ -84,30 +84,6 @@ struct LayoutPrototype: View {
             if case let .failure(error) = weatherFetchResult {
                 Text(error.localizedDescription)
             }
-        }
-    }
-
-    func fetchWeatherCondition(in area: String, at date: Date) -> Result<WeatherDateTemperature, Error>? {
-        print("fetchWeatherCondition called")
-        do {
-            // MARK: Encoding into input JSON String
-
-            let areaDate = AreaDate(area: area, date: date)
-            let areaDateJSONString = generateJSONStringFromAreaDate(areaDate)
-
-            // MARK: Decoding from output JSON String
-
-            let fetchedWeatherJSONString = try YumemiWeather.fetchWeather(areaDateJSONString)
-            let weatherDateTemperature = generateWeatherDateTemperatureFrom(json: fetchedWeatherJSONString)
-
-            return .success(weatherDateTemperature)
-
-        } catch let error as YumemiWeatherError {
-            print("returned YumemiWeatherError")
-            return .failure(error)
-        } catch {
-            print("returned Error")
-            fatalError("LayoutPrototype: fetchWeatherCondition(at:) returned error \(error)")
         }
     }
 }
