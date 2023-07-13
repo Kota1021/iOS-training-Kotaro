@@ -10,7 +10,6 @@
 		350AC30C2A5BD500002A894B /* LayoutPrototype.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350AC30B2A5BD500002A894B /* LayoutPrototype.swift */; };
 		3510B2BF2A5E68EB00ADAD10 /* YumemiWeather in Frameworks */ = {isa = PBXBuildFile; productRef = 3510B2BE2A5E68EB00ADAD10 /* YumemiWeather */; };
 		353A7C312A5D33840038391A /* SwiftFormat in Frameworks */ = {isa = PBXBuildFile; productRef = 353A7C302A5D33840038391A /* SwiftFormat */; };
-		357FE9442A5E8A2200F02DA9 /* JSONConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357FE9432A5E8A2200F02DA9 /* JSONConverter.swift */; };
 		357FE9482A5EA08100F02DA9 /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357FE9472A5EA08100F02DA9 /* Weather.swift */; };
 		35CF2A282A5FC66D001D6E24 /* WeatherAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CF2A272A5FC66D001D6E24 /* WeatherAPIClient.swift */; };
 		35DB58D22A5BB42900EFF284 /* iOS_trainingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DB58D12A5BB42900EFF284 /* iOS_trainingApp.swift */; };
@@ -41,7 +40,6 @@
 
 /* Begin PBXFileReference section */
 		350AC30B2A5BD500002A894B /* LayoutPrototype.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutPrototype.swift; sourceTree = "<group>"; };
-		357FE9432A5E8A2200F02DA9 /* JSONConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONConverter.swift; sourceTree = "<group>"; };
 		357FE9472A5EA08100F02DA9 /* Weather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weather.swift; sourceTree = "<group>"; };
 		35CF2A272A5FC66D001D6E24 /* WeatherAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherAPIClient.swift; sourceTree = "<group>"; };
 		35DB58CE2A5BB42900EFF284 /* iOS-training.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS-training.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -87,7 +85,6 @@
 			isa = PBXGroup;
 			children = (
 				35CF2A272A5FC66D001D6E24 /* WeatherAPIClient.swift */,
-				357FE9432A5E8A2200F02DA9 /* JSONConverter.swift */,
 				357FE9472A5EA08100F02DA9 /* Weather.swift */,
 			);
 			path = Models;
@@ -293,7 +290,6 @@
 				350AC30C2A5BD500002A894B /* LayoutPrototype.swift in Sources */,
 				35DB58D42A5BB42900EFF284 /* ContentView.swift in Sources */,
 				35DB58D22A5BB42900EFF284 /* iOS_trainingApp.swift in Sources */,
-				357FE9442A5E8A2200F02DA9 /* JSONConverter.swift in Sources */,
 				357FE9482A5EA08100F02DA9 /* Weather.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
