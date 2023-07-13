@@ -28,16 +28,6 @@ struct LayoutPrototype: View {
             return nil
         }
     }
-//    var errorAlertIsPresented: Bool {
-//        switch weatherFetchResult {
-//        case .none:
-//            return false
-//        case .success:
-//            return false
-//        case .failure:
-//            return true
-//        }
-//    }
 
     var body: some View {
         GeometryReader { geometry in
