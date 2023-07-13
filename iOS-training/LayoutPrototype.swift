@@ -12,9 +12,10 @@ struct LayoutPrototype: View {
     @State private var weatherFetchResult: Result<Weather, Error>?
 
     var errorAlertIsPresented: Bool {
-        if case .failure = weatherFetchResult {
+        switch weatherFetchResult {
+        case .failure:
             return true
-        } else {
+        default:
             return false
         }
     }
