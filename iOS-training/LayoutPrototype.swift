@@ -71,7 +71,13 @@ struct LayoutPrototype: View {
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
-        .alert("Error", isPresented: .constant(errorAlertIsPresented)) { /* Buttons */ } message: {
+        .alert("Error", isPresented: Binding(
+                                        get: { errorAlertIsPresented },
+                                        set: { isPresented in
+                                            if !isPresented{ weatherFetchResult = nil }
+                                        }
+                                        )
+                ) { /* Buttons */ } message: {
             if let weatherFetchResult,
                case let WeatherFetchResult.failure(errorDuringFetch) = weatherFetchResult
             {
