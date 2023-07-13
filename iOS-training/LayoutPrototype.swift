@@ -9,15 +9,15 @@ import SwiftUI
 import YumemiWeather
 
 struct LayoutPrototype: View {
-    @State private var weatherFetchResult: Result<Weather,Error>?
+    @State private var weatherFetchResult: Result<Weather, Error>?
 
     var errorAlertIsPresented: Bool {
         switch weatherFetchResult {
         case .none:
             return false
-        case .success(_):
+        case .success:
             return false
-        case .failure(_):
+        case .failure:
             return true
         }
     }
@@ -30,18 +30,17 @@ struct LayoutPrototype: View {
             let buttonWidth = geometry.size.width / 4
 
             VStack(alignment: .center, spacing: .zero) {
-                
                 switch weatherFetchResult {
                 case .none:
                     EmptyView()
-                case .success(let weather):
+                case let .success(weather):
                     weather.icon
                         .resizable()
                         .scaledToFit()
                         .foregroundStyle(weather.color)
                         .frame(width: imageSideLength,
                                height: imageSideLength)
-                case .failure(_):
+                case .failure:
                     Image(systemName: "exclamationmark.square.fill")
                         .resizable()
                         .scaledToFit()
@@ -72,29 +71,26 @@ struct LayoutPrototype: View {
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
         .alert("Error", isPresented: Binding(
-                                            get: { errorAlertIsPresented },
-                                            set: { isPresented in
-                                                if !isPresented{ weatherFetchResult = nil }
-                                            }
-                                        )
-                ) { /* Buttons */ } message: {
+            get: { errorAlertIsPresented },
+            set: { isPresented in
+                if !isPresented { weatherFetchResult = nil }
+            }
+        )) { /* Buttons */ } message: {
             switch weatherFetchResult {
             case .none:
                 EmptyView()
-            case .success(_):
+            case .success:
                 EmptyView()
-            case .failure(let errorDuringFetch):
+            case let .failure(errorDuringFetch):
                 Text(errorDuringFetch.localizedDescription)
             }
         }
     }
 
-    func fetchWeatherCondition(at area: String) -> Result<Weather,Error> {
-        let fetchedResult = Result<String, Error>{ try YumemiWeather.fetchWeatherCondition(at: area)}
-        
-        switch fetchedResult{
-        case .success(let weatherString):
-            switch weatherString {
+    func fetchWeatherCondition(at area: String) -> Result<Weather, Error> {
+        let fetchedResult = Result<String, Error> { try YumemiWeather.fetchWeatherCondition(at: area) }
+        return fetchedResult.flatMap { weather in
+            switch weather{
             case "sunny":
                 return .success(.sunny)
             case "cloudy":
@@ -104,9 +100,7 @@ struct LayoutPrototype: View {
             default:
                 return .failure(YumemiWeatherError.unknownError)
             }
-            
-        case .failure(let error):
-            return .failure(error)
+
         }
     }
 }
