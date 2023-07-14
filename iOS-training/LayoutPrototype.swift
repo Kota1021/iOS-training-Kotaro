@@ -54,17 +54,17 @@ struct LayoutPrototype: View {
                 }
 
                 HStack(spacing: .zero) {
-                    let (minTem, maxTem) = if let weatherInfo {
+                    let (minTemperature, maxTemperature) = if let weatherInfo {
                         (String(weatherInfo.maxTemperature),
                          String(weatherInfo.maxTemperature))
                     } else {
                         ("--", "--")
                     }
 
-                    Text(minTem)
+                    Text(minTemperature)
                         .foregroundStyle(.blue)
                         .frame(width: temperatureWidth)
-                    Text(maxTem)
+                    Text(maxTemperature)
                         .foregroundStyle(.red)
                         .frame(width: temperatureWidth)
                 }
