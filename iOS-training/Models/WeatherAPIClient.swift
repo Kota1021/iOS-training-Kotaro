@@ -10,7 +10,6 @@ import YumemiWeather
 
 struct WeatherAPIClient {
     func fetchWeatherCondition(in area: String, at date: Date) -> Result<WeatherDateTemperature, Error>? {
-        print("fetchWeatherCondition called")
         do {
             // MARK: Encoding into input JSON String
 
