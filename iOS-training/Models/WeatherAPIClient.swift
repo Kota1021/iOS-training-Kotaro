@@ -9,24 +9,21 @@ import Foundation
 import YumemiWeather
 
 struct WeatherAPIClient {
-    func fetchWeatherCondition(in area: String, at date: Date) -> Result<WeatherDateTemperature, Error>? {
-        do {
-            // MARK: Encoding into input JSON String
+    func fetchWeatherCondition(in area: String, at date: Date) -> Result<WeatherDateTemperature, Error> {
+        // MARK: Encoding into input JSON String
 
-            let areaDate = AreaDate(area: area, date: date)
-            let areaDateJSONString = generateJSONStringFromAreaDate(areaDate)
+        let areaDate = AreaDate(area: area, date: date)
+        let areaDateJSONString = generateJSONStringFromAreaDate(areaDate)
 
+        let weatherDateTemperature = Result<WeatherDateTemperature, Error> {
             // MARK: Decoding from output JSON String
 
             let fetchedWeatherJSONString = try YumemiWeather.fetchWeather(areaDateJSONString)
             let weatherDateTemperature = generateWeatherDateTemperatureFrom(json: fetchedWeatherJSONString)
-
-            return .success(weatherDateTemperature)
-
-        } catch {
-            print("fetchWeather returned an error \(error)")
-            return .failure(error)
+            return weatherDateTemperature
         }
+
+        return weatherDateTemperature
     }
 }
 
