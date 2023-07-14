@@ -51,9 +51,6 @@ extension WeatherAPIClient {
 
     private func generateJSONStringFromAreaDate(_ areaDate: AreaDate) -> String {
         let encoder = JSONEncoder()
-        // FIXME: ISO8601をハードコーディングするのは気持ち悪い
-        // しかし、dateEncodingStrategyでiso8601を指定すると末尾にzが着く
-        // c.f. https://qiita.com/m__ike_/items/81d84465bb4b9c470131
         // 末尾のZはZulu timeの略
         // c.f. https://qiita.com/yosshi4486/items/6703c9f42d9b33c936e7
         let formatter = DateFormatter()
@@ -72,7 +69,9 @@ extension WeatherAPIClient {
     private func generateWeatherDateTemperatureFrom(json: String) -> WeatherDateTemperature {
         let fetchedWeatherJSON = json.data(using: .utf8)!
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+        decoder.dateDecodingStrategy = .formatted(formatter)
         do {
             let weatherDateTemperature = try decoder.decode(WeatherDateTemperature.self, from: fetchedWeatherJSON)
             return weatherDateTemperature
