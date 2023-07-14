@@ -13,13 +13,12 @@ struct WeatherAPIClient {
         // MARK: Encoding into input JSON String
 
         let areaDate = AreaDate(area: area, date: date)
-        let areaDateJSONString = generateJSONStringFromAreaDate(areaDate)
-
         let weatherDateTemperature = Result<WeatherDateTemperature, Error> {
             // MARK: Decoding from output JSON String
 
-            let fetchedWeatherJSONString = try YumemiWeather.fetchWeather(areaDateJSONString)
-            let weatherDateTemperature = generateWeatherDateTemperatureFrom(json: fetchedWeatherJSONString)
+            let areaDateJSON = try generateJSONFromAreaDate(areaDate) // can throw JSONError.failedToStringify
+            let fetchedWeatherJSON = try YumemiWeather.fetchWeather(areaDateJSON) // can throw YumemiWeatherError.invalidParameterError and \.unknownError
+            let weatherDateTemperature = try generateWeatherDateTemperatureFrom(json: fetchedWeatherJSON) // can throw JSONError.failedToStringify
             return weatherDateTemperature
         }
 
@@ -45,35 +44,44 @@ extension WeatherAPIClient {
         let date: Date
     }
 
-    private func generateJSONStringFromAreaDate(_ areaDate: AreaDate) -> String {
+    private func generateJSONFromAreaDate(_ areaDate: AreaDate) throws -> String {
         let encoder = JSONEncoder()
+        let formatter = DateFormatter()
         // 末尾のZはZulu timeの略
         // c.f. https://qiita.com/yosshi4486/items/6703c9f42d9b33c936e7
-        let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
         encoder.dateEncodingStrategy = .formatted(formatter)
-        do {
-            let areaDateJSON = try encoder.encode(areaDate)
-            return String(data: areaDateJSON, encoding: .utf8)!
-        } catch {
-            fatalError("failed during generating areaDate \(error)")
-        }
+
+        let areaDateJSONData = try encoder.encode(areaDate)
+        let areaDateJSON = String(data: areaDateJSONData, encoding: .utf8)
+
+        guard let areaDateJSON else { throw JSONError.failedToStringify }
+        return areaDateJSON
     }
 
     // MARK: - output
 
-    private func generateWeatherDateTemperatureFrom(json: String) -> WeatherDateTemperature {
-        let fetchedWeatherJSON = json.data(using: .utf8)!
+    private func generateWeatherDateTemperatureFrom(json: String) throws -> WeatherDateTemperature {
         let decoder = JSONDecoder()
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
         decoder.dateDecodingStrategy = .formatted(formatter)
         decoder.keyDecodingStrategy = .convertFromSnakeCase
-        do {
-            let weatherDateTemperature = try decoder.decode(WeatherDateTemperature.self, from: fetchedWeatherJSON)
-            return weatherDateTemperature
-        } catch {
-            fatalError("failed during decoding json \(error)")
+
+        let fetchedWeatherJSON = json.data(using: .utf8)
+        guard let fetchedWeatherJSON else { throw JSONError.failedToStringify }
+
+        let weatherDateTemperature = try decoder.decode(WeatherDateTemperature.self, from: fetchedWeatherJSON)
+        return weatherDateTemperature
+    }
+
+    enum JSONError: Error, LocalizedError {
+        case failedToStringify
+        var errorDescription: String? {
+            switch self {
+            case .failedToStringify:
+                "failed To Stringify JSON"
+            }
         }
     }
 
