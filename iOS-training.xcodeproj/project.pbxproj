@@ -19,6 +19,7 @@
 		35DB58E32A5BB42C00EFF284 /* iOS_trainingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DB58E22A5BB42C00EFF284 /* iOS_trainingTests.swift */; };
 		35DB58ED2A5BB42C00EFF284 /* iOS_trainingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DB58EC2A5BB42C00EFF284 /* iOS_trainingUITests.swift */; };
 		35DB58EF2A5BB42C00EFF284 /* iOS_trainingUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DB58EE2A5BB42C00EFF284 /* iOS_trainingUITestsLaunchTests.swift */; };
+		35FA06AB2A60D759000A99D7 /* WeatherDateTemperature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35FA06AA2A60D759000A99D7 /* WeatherDateTemperature.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +53,7 @@
 		35DB58E82A5BB42C00EFF284 /* iOS-trainingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "iOS-trainingUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		35DB58EC2A5BB42C00EFF284 /* iOS_trainingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOS_trainingUITests.swift; sourceTree = "<group>"; };
 		35DB58EE2A5BB42C00EFF284 /* iOS_trainingUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOS_trainingUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		35FA06AA2A60D759000A99D7 /* WeatherDateTemperature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDateTemperature.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +88,7 @@
 			children = (
 				35CF2A272A5FC66D001D6E24 /* WeatherAPIClient.swift */,
 				357FE9472A5EA08100F02DA9 /* Weather.swift */,
+				35FA06AA2A60D759000A99D7 /* WeatherDateTemperature.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -289,6 +292,7 @@
 				35CF2A282A5FC66D001D6E24 /* WeatherAPIClient.swift in Sources */,
 				350AC30C2A5BD500002A894B /* LayoutPrototype.swift in Sources */,
 				35DB58D42A5BB42900EFF284 /* ContentView.swift in Sources */,
+				35FA06AB2A60D759000A99D7 /* WeatherDateTemperature.swift in Sources */,
 				35DB58D22A5BB42900EFF284 /* iOS_trainingApp.swift in Sources */,
 				357FE9482A5EA08100F02DA9 /* Weather.swift in Sources */,
 			);

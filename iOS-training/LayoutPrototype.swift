@@ -9,9 +9,9 @@ import SwiftUI
 
 struct LayoutPrototype: View {
     let weatherAPI = WeatherAPIClient()
-    @State private var weatherFetchResult: Result<WeatherAPIClient.WeatherDateTemperature, Error>?
+    @State private var weatherFetchResult: Result<WeatherDateTemperature, Error>?
 
-    var weatherInfo: WeatherAPIClient.WeatherDateTemperature? {
+    var weatherInfo: WeatherDateTemperature? {
         switch weatherFetchResult {
         case let .success(weatherDateTemperature):
             return weatherDateTemperature
@@ -19,10 +19,10 @@ struct LayoutPrototype: View {
             return nil
         }
     }
-    
-    var error:Error?{
-        switch weatherFetchResult{
-        case .failure(let error):
+
+    var error: Error? {
+        switch weatherFetchResult {
+        case let .failure(error):
             return error
         default:
             return nil
