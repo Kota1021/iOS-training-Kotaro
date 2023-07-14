@@ -72,6 +72,7 @@ extension WeatherAPIClient {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
         decoder.dateDecodingStrategy = .formatted(formatter)
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
         do {
             let weatherDateTemperature = try decoder.decode(WeatherDateTemperature.self, from: fetchedWeatherJSON)
             return weatherDateTemperature
