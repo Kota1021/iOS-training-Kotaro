@@ -74,7 +74,6 @@ struct LayoutPrototype: View {
                     Button("Close") {}
                         .frame(width: buttonWidth)
                     Button("Reload") {
-                        print("reload tapped")
                         weatherFetchResult = weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date())
                     }
                     .frame(width: buttonWidth)
