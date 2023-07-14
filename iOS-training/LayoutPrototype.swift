@@ -37,21 +37,9 @@ struct LayoutPrototype: View {
             let buttonWidth = geometry.size.width / 4
 
             VStack(alignment: .center, spacing: .zero) {
-                if let weatherCondition = weatherInfo?.weatherCondition {
-                    weatherCondition.icon
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(weatherCondition.color)
-                        .frame(width: imageSideLength,
-                               height: imageSideLength)
-                } else {
-                    Image(systemName: "exclamationmark.square.fill")
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(.gray)
-                        .frame(width: imageSideLength,
-                               height: imageSideLength)
-                }
+                WeatherIcon(weatherInfo?.weatherCondition)
+                    .frame(width: imageSideLength,
+                           height: imageSideLength)
 
                 HStack(spacing: .zero) {
                     let (minTemperature, maxTemperature) = if let weatherInfo {
