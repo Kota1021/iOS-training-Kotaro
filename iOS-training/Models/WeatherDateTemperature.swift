@@ -7,7 +7,7 @@
 import Foundation
 
 struct WeatherDateTemperature: Decodable {
-// Example JSON with object root
+// JSON Example 
 /*
     {
        "max_temperature":25,
