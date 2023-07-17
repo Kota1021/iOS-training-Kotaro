@@ -70,10 +70,7 @@ extension WeatherAPIClient {
         decoder.dateDecodingStrategy = .formatted(dateFormatter)
         decoder.keyDecodingStrategy = .convertFromSnakeCase
 
-        let fetchedWeatherJSON = json.data(using: .utf8)
-        guard let fetchedWeatherJSON else { throw JSONError.failedToStringify }
-
-        let weatherDateTemperature = try decoder.decode(WeatherDateTemperature.self, from: fetchedWeatherJSON)
+        let weatherDateTemperature = try decoder.decode(WeatherDateTemperature.self, from: Data(json.utf8))
         return weatherDateTemperature
     }
 
