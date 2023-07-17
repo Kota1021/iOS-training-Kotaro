@@ -18,7 +18,7 @@ struct WeatherAPIClient {
 
             let areaDateJSON = try generateJSONFromAreaDate(areaDate)
             let fetchedWeatherJSON = try YumemiWeather.fetchWeather(areaDateJSON) // can throw YumemiWeatherError.invalidParameterError and \.unknownError
-            let weatherDateTemperature = try generateWeatherDateTemperatureFrom(json: fetchedWeatherJSON)
+            let weatherDateTemperature = generateWeatherDateTemperatureFrom(json: fetchedWeatherJSON)
             return weatherDateTemperature
         }
 
@@ -67,13 +67,17 @@ extension WeatherAPIClient {
 
     // MARK: - output
 
-    private func generateWeatherDateTemperatureFrom(json: String) throws -> WeatherDateTemperature {
+    private func generateWeatherDateTemperatureFrom(json: String) -> WeatherDateTemperature {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .formatted(dateFormatter)
         decoder.keyDecodingStrategy = .convertFromSnakeCase
-
-        let weatherDateTemperature = try decoder.decode(WeatherDateTemperature.self, from: Data(json.utf8))
-        return weatherDateTemperature
+        
+        do {
+            let weatherDateTemperature = try decoder.decode(WeatherDateTemperature.self, from: Data(json.utf8))
+            return weatherDateTemperature
+        } catch {
+            preconditionFailure("could not decoder WeatherDateTemperature")
+        }
     }
 
     enum JSONError: Error, LocalizedError {
