@@ -16,9 +16,9 @@ struct WeatherAPIClient {
         let weatherDateTemperature = Result<WeatherDateTemperature, Error> {
             // MARK: Decoding from output JSON String
 
-            let areaDateJSON = try generateJSONFromAreaDate(areaDate) // can throw JSONError.failedToStringify
+            let areaDateJSON = try generateJSONFromAreaDate(areaDate)
             let fetchedWeatherJSON = try YumemiWeather.fetchWeather(areaDateJSON) // can throw YumemiWeatherError.invalidParameterError and \.unknownError
-            let weatherDateTemperature = try generateWeatherDateTemperatureFrom(json: fetchedWeatherJSON) // can throw JSONError.failedToStringify
+            let weatherDateTemperature = try generateWeatherDateTemperatureFrom(json: fetchedWeatherJSON)
             return weatherDateTemperature
         }
 
@@ -86,14 +86,4 @@ extension WeatherAPIClient {
         }
     }
 
-    // MARK: for testing
-
-    // let decoder: JSONDecoder = JSONDecoder()
-    // decoder.dateDecodingStrategy = .iso8601
-    // do {
-    //    let decoded: WeatherDateTemperature = try decoder.decode(WeatherDateTemperature.self, from: jsonString.data(using: .utf8)!)
-    //    print(decoded)
-    // } catch {
-    //    print(error.localizedDescription)
-    // }
 }
