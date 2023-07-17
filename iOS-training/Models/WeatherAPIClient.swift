@@ -24,6 +24,14 @@ struct WeatherAPIClient {
 
         return weatherDateTemperature
     }
+    
+    private let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        // 末尾のZはZulu timeの略
+        // c.f. https://qiita.com/yosshi4486/items/6703c9f42d9b33c936e7
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+        return dateFormatter
+    }()
 }
 
 // ----------------------
@@ -46,11 +54,7 @@ extension WeatherAPIClient {
 
     private func generateJSONFromAreaDate(_ areaDate: AreaDate) throws -> String {
         let encoder = JSONEncoder()
-        let formatter = DateFormatter()
-        // 末尾のZはZulu timeの略
-        // c.f. https://qiita.com/yosshi4486/items/6703c9f42d9b33c936e7
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
-        encoder.dateEncodingStrategy = .formatted(formatter)
+        encoder.dateEncodingStrategy = .formatted(dateFormatter)
 
         let areaDateJSONData = try encoder.encode(areaDate)
         let areaDateJSON = String(data: areaDateJSONData, encoding: .utf8)
@@ -63,9 +67,7 @@ extension WeatherAPIClient {
 
     private func generateWeatherDateTemperatureFrom(json: String) throws -> WeatherDateTemperature {
         let decoder = JSONDecoder()
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
-        decoder.dateDecodingStrategy = .formatted(formatter)
+        decoder.dateDecodingStrategy = .formatted(dateFormatter)
         decoder.keyDecodingStrategy = .convertFromSnakeCase
 
         let fetchedWeatherJSON = json.data(using: .utf8)
