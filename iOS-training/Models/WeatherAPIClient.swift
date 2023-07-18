@@ -43,13 +43,6 @@ extension WeatherAPIClient {
     // MARK: - input
 
     private struct AreaDate: Encodable {
-        // JSON Example
-        /*
-            {
-                "area": "tokyo",
-                "date": "2020-04-01T12:00:00+09:00"
-            }
-         */
         let area: String
         let date: Date
     }
