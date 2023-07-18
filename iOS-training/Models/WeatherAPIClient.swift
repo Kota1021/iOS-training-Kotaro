@@ -18,13 +18,13 @@ struct WeatherAPIClient {
 
             let areaDateJSON = try generateJSONFromAreaDate(areaDate)
             let fetchedWeatherJSON = try YumemiWeather.fetchWeather(areaDateJSON) // can throw YumemiWeatherError.invalidParameterError and \.unknownError
-            let weatherDateTemperature = generateWeatherDateTemperatureFrom(json: fetchedWeatherJSON)
+            let weatherDateTemperature = try generateWeatherDateTemperatureFrom(json: fetchedWeatherJSON)
             return weatherDateTemperature
         }
 
         return weatherDateTemperature
     }
-    
+
     private let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         // 末尾のZはZulu timeの略
@@ -43,7 +43,7 @@ extension WeatherAPIClient {
     // MARK: - input
 
     private struct AreaDate: Encodable {
-        // JSON Example 
+        // JSON Example
         /*
             {
                 "area": "tokyo",
@@ -61,33 +61,37 @@ extension WeatherAPIClient {
         let areaDateJSONData = try encoder.encode(areaDate)
         let areaDateJSON = String(data: areaDateJSONData, encoding: .utf8)
 
-        guard let areaDateJSON else { throw JSONError.failedToStringify }
+        guard let areaDateJSON else {
+            throw JSONError.encodedIntoNil
+        }
         return areaDateJSON
     }
 
     // MARK: - output
 
-    private func generateWeatherDateTemperatureFrom(json: String) -> WeatherDateTemperature {
+    private func generateWeatherDateTemperatureFrom(json: String) throws -> WeatherDateTemperature {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .formatted(dateFormatter)
         decoder.keyDecodingStrategy = .convertFromSnakeCase
-        
+
         do {
             let weatherDateTemperature = try decoder.decode(WeatherDateTemperature.self, from: Data(json.utf8))
             return weatherDateTemperature
         } catch {
-            preconditionFailure("could not decoder WeatherDateTemperature")
+            throw JSONError.failedToStringify
         }
     }
 
     enum JSONError: Error, LocalizedError {
         case failedToStringify
+        case encodedIntoNil
         var errorDescription: String? {
             switch self {
             case .failedToStringify:
-                "failed To Stringify JSON"
+                "failed to stringify JSON"
+            case .encodedIntoNil:
+                "encoded into nil"
             }
         }
     }
-
 }

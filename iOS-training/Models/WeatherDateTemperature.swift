@@ -7,15 +7,15 @@
 import Foundation
 
 struct WeatherDateTemperature: Decodable {
-// JSON Example 
-/*
-    {
-       "max_temperature":25,
-       "date":"2020-04-01T12:00:00+09:00",
-       "min_temperature":7,
-       "weather_condition":"cloudy"
-    }
-*/
+    // JSON Example
+    /*
+     {
+        "max_temperature":25,
+        "date":"2020-04-01T12:00:00+09:00",
+        "min_temperature":7,
+        "weather_condition":"cloudy"
+     }
+     */
     let maxTemperature: Int
     let date: Date
     let minTemperature: Int
