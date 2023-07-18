@@ -67,8 +67,8 @@ extension WeatherAPIClient {
         decoder.dateDecodingStrategy = .formatted(dateFormatter)
         decoder.keyDecodingStrategy = .convertFromSnakeCase
 
-            let weatherDateTemperature = try decoder.decode(WeatherDateTemperature.self, from: Data(json.utf8))
-            return weatherDateTemperature
+        let weatherDateTemperature = try decoder.decode(WeatherDateTemperature.self, from: Data(json.utf8))
+        return weatherDateTemperature
     }
 
     enum JSONError: Error, LocalizedError {
