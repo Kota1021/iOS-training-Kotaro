@@ -17,7 +17,7 @@ struct WeatherDateTemperature: Decodable {
     }
 */
     let maxTemperature: Int
-    let date: Date // ISO 8601
+    let date: Date
     let minTemperature: Int
     let weatherCondition: Weather
 }
