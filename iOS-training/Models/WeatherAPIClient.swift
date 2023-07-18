@@ -55,7 +55,7 @@ extension WeatherAPIClient {
         let areaDateJSON = String(data: areaDateJSONData, encoding: .utf8)
 
         guard let areaDateJSON else {
-            throw JSONError.encodedIntoNil
+            throw JSONError.failedToStringify
         }
         return areaDateJSON
     }
@@ -67,23 +67,16 @@ extension WeatherAPIClient {
         decoder.dateDecodingStrategy = .formatted(dateFormatter)
         decoder.keyDecodingStrategy = .convertFromSnakeCase
 
-        do {
             let weatherDateTemperature = try decoder.decode(WeatherDateTemperature.self, from: Data(json.utf8))
             return weatherDateTemperature
-        } catch {
-            throw JSONError.failedToStringify
-        }
     }
 
     enum JSONError: Error, LocalizedError {
         case failedToStringify
-        case encodedIntoNil
         var errorDescription: String? {
             switch self {
             case .failedToStringify:
                 "failed to stringify JSON"
-            case .encodedIntoNil:
-                "encoded into nil"
             }
         }
     }
