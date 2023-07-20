@@ -6,17 +6,26 @@
 //
 
 import SwiftUI
-import YumemiWeather
 
 struct LayoutPrototype: View {
-    @State private var weatherFetchResult: Result<Weather, Error>?
+    let weatherAPI = WeatherAPIClient()
+    @State private var weatherFetchResult: Result<WeatherDateTemperature, Error>?
 
-    var errorAlertIsPresented: Bool {
+    var weatherInfo: WeatherDateTemperature? {
         switch weatherFetchResult {
-        case .failure:
-            return true
+        case let .success(weatherDateTemperature):
+            return weatherDateTemperature
         default:
-            return false
+            return nil
+        }
+    }
+
+    var error: Error? {
+        switch weatherFetchResult {
+        case let .failure(error):
+            return error
+        default:
+            return nil
         }
     }
 
@@ -28,30 +37,22 @@ struct LayoutPrototype: View {
             let buttonWidth = geometry.size.width / 4
 
             VStack(alignment: .center, spacing: .zero) {
-                switch weatherFetchResult {
-                case .none:
-                    EmptyView()
-                case let .success(weather):
-                    weather.icon
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(weather.color)
-                        .frame(width: imageSideLength,
-                               height: imageSideLength)
-                case .failure:
-                    Image(systemName: "exclamationmark.square.fill")
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(.gray)
-                        .frame(width: imageSideLength,
-                               height: imageSideLength)
-                }
+                WeatherIcon(weatherInfo?.weatherCondition)
+                    .frame(width: imageSideLength,
+                           height: imageSideLength)
 
                 HStack(spacing: .zero) {
-                    Text("--")
+                    let (minTemperature, maxTemperature) = if let weatherInfo {
+                        (String(weatherInfo.maxTemperature),
+                         String(weatherInfo.maxTemperature))
+                    } else {
+                        ("--", "--")
+                    }
+
+                    Text(minTemperature)
                         .foregroundStyle(.blue)
                         .frame(width: temperatureWidth)
-                    Text("--")
+                    Text(maxTemperature)
                         .foregroundStyle(.red)
                         .frame(width: temperatureWidth)
                 }
@@ -61,7 +62,7 @@ struct LayoutPrototype: View {
                     Button("Close") {}
                         .frame(width: buttonWidth)
                     Button("Reload") {
-                        weatherFetchResult = self.fetchWeatherCondition(at: "tokyo")
+                        weatherFetchResult = weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date())
                     }
                     .frame(width: buttonWidth)
                 }
@@ -69,7 +70,7 @@ struct LayoutPrototype: View {
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
         .alert("Error", isPresented: Binding(
-            get: { errorAlertIsPresented },
+            get: { error != nil },
             set: { isPresented in
                 if !isPresented { weatherFetchResult = nil }
             }
@@ -79,52 +80,8 @@ struct LayoutPrototype: View {
             }
         }
     }
-
-    func fetchWeatherCondition(at area: String) -> Result<Weather, Error> {
-        let fetchedResult = Result<String, Error> { try YumemiWeather.fetchWeatherCondition(at: area) }
-        return fetchedResult.flatMap { weather in
-            switch weather {
-            case "sunny":
-                return .success(.sunny)
-            case "cloudy":
-                return .success(.cloudy)
-            case "rainy":
-                return .success(.rainy)
-            default:
-                return .failure(YumemiWeatherError.unknownError)
-            }
-        }
-    }
 }
 
 #Preview {
     LayoutPrototype()
-}
-
-enum Weather {
-    case sunny
-    case cloudy
-    case rainy
-
-    var icon: Image {
-        switch self {
-        case .sunny:
-            return Image(.iconsun)
-        case .cloudy:
-            return Image(.iconclouds)
-        case .rainy:
-            return Image(.iconumbrella)
-        }
-    }
-
-    var color: Color {
-        switch self {
-        case .sunny:
-            return .red
-        case .cloudy:
-            return .gray
-        case .rainy:
-            return .blue
-        }
-    }
 }
