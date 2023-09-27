@@ -17,12 +17,32 @@ final class iOS_trainingTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+    func test_WeatherRequestEncoder_generateRequestJSON() throws {
+        let timeZone = TimeZone(abbreviation: "JST")!
+        let inputDateComponents = DateComponents(calendar: Calendar(identifier: .gregorian), timeZone: timeZone, year: 2020, month: 4, day: 1, hour: 12, minute: 0)
+        let inputDate = inputDateComponents.date!
+
+        let actualJSON = try WeatherRequestEncoder().generateRequestJSON(area: "tokyo", date: inputDate)
+        let expectedJSON = #"{"area":"tokyo","date":"2020-04-01T12:00:00+09:00"}"#
+        XCTAssertEqual(actualJSON, expectedJSON)
+    }
+
+    func test_WeatherDateTemperatureDecoder_generateWeatherDateTemperature() throws {
+        let inputJSON = """
+        {
+            "max_temperature":25,
+            "date":"2020-04-01T12:00:00+09:00",
+            "min_temperature":7,
+            "weather_condition":"cloudy"
+        }
+        """
+
+        do {
+            _ = try WeatherDateTemperatureDecoder().generateWeatherDateTemperature(from: inputJSON)
+            XCTAssertTrue(true)
+        } catch {
+            XCTFail()
+        }
     }
 
     func testPerformanceExample() throws {
