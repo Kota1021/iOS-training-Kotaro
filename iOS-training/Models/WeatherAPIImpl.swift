@@ -8,7 +8,7 @@
 import Foundation
 import YumemiWeather
 
-struct WeatherAPIClient {
+struct WeatherAPIImpl: WeatherAPI {
     func fetchWeatherCondition(in area: String, at date: Date) -> Result<WeatherDateTemperature, Error> {
         // MARK: Encoding into input JSON String
 
@@ -35,7 +35,7 @@ struct WeatherAPIClient {
 }
 
 // ----------------------
-extension WeatherAPIClient {
+extension WeatherAPIImpl {
     // MARK: Below JSON related
 
     // c.f. https://medium.com/@bj1024/swift4-codable-json-encode-17eaa95372d1

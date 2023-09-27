@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LayoutPrototype: View {
-    let weatherAPI = WeatherAPIClient()
+    let weatherAPI: WeatherAPI
     @State private var weatherFetchResult: Result<WeatherDateTemperature, Error>?
 
     var weatherInfo: WeatherDateTemperature? {
@@ -83,5 +83,5 @@ struct LayoutPrototype: View {
 }
 
 #Preview {
-    LayoutPrototype()
+    LayoutPrototype(weatherAPI: WeatherAPIImpl())
 }
