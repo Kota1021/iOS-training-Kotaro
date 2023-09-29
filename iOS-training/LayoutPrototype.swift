@@ -43,7 +43,7 @@ struct LayoutPrototype: View {
 
                 HStack(spacing: .zero) {
                     let (minTemperature, maxTemperature) = if let weatherInfo {
-                        (String(weatherInfo.maxTemperature),
+                        (String(weatherInfo.minTemperature),
                          String(weatherInfo.maxTemperature))
                     } else {
                         ("--", "--")
