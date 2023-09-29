@@ -83,5 +83,5 @@ struct LayoutPrototype: View {
 }
 
 #Preview {
-    LayoutPrototype(weatherAPI: WeatherAPIImpl())
+    LayoutPrototype(weatherAPI: WeatherAPIStub())
 }
