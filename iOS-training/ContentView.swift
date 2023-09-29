@@ -8,11 +8,86 @@
 import SwiftUI
 
 struct ContentView: View {
+    let weatherAPI: WeatherAPI
+    @State private var weatherFetchResult: Result<WeatherDateTemperature, Error>?
+
+    var weatherInfo: WeatherDateTemperature? {
+        switch weatherFetchResult {
+        case let .success(weatherDateTemperature):
+            return weatherDateTemperature
+        default:
+            return nil
+        }
+    }
+
+    var error: Error? {
+        switch weatherFetchResult {
+        case let .failure(error):
+            return error
+        default:
+            return nil
+        }
+    }
+
+    init(weatherAPI: WeatherAPI) {
+        self.weatherAPI = weatherAPI
+
+        _weatherFetchResult = State(initialValue: weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date()))
+    }
+
     var body: some View {
-        LayoutPrototype(weatherAPI: WeatherAPIImpl())
+        GeometryReader { geometry in
+
+            let imageSideLength = geometry.size.width / 2
+            let temperatureWidth = geometry.size.width / 4
+            let buttonWidth = geometry.size.width / 4
+
+            VStack(alignment: .center, spacing: .zero) {
+                WeatherIcon(weatherInfo?.weatherCondition)
+                    .frame(width: imageSideLength,
+                           height: imageSideLength)
+
+                HStack(spacing: .zero) {
+                    let (minTemperature, maxTemperature) = if let weatherInfo {
+                        (String(weatherInfo.minTemperature),
+                         String(weatherInfo.maxTemperature))
+                    } else {
+                        ("--", "--")
+                    }
+
+                    Text(minTemperature)
+                        .foregroundStyle(.blue)
+                        .frame(width: temperatureWidth)
+                    Text(maxTemperature)
+                        .foregroundStyle(.red)
+                        .frame(width: temperatureWidth)
+                }
+                .padding(.bottom, 80)
+
+                HStack(spacing: .zero) {
+                    Button("Close") {}
+                        .frame(width: buttonWidth)
+                    Button("Reload") {
+                        weatherFetchResult = weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date())
+                    }
+                    .frame(width: buttonWidth)
+                }
+            }
+            .frame(width: geometry.size.width, height: geometry.size.height)
+        }
+        .alert("Error", isPresented: Binding(
+            get: { error != nil },
+            set: { isPresented in
+                if !isPresented { weatherFetchResult = nil }
+            }
+        )) { /* Buttons */ } message: {
+            if case let .failure(error) = weatherFetchResult {
+                Text(error.localizedDescription)
+            }
+        }
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView(weatherAPI: WeatherAPIStub())
 }

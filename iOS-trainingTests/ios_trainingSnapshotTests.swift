@@ -13,7 +13,7 @@ import XCTest
 private let referenceSize = CGSize(width: 300, height: 300)
 
 class LayoutPrototypeTests: XCTestCase {
-    private let view: UIView = UIHostingController(rootView: LayoutPrototype(weatherAPI: WeatherAPIStub(.sunny))).view
+    private let view: UIView = UIHostingController(rootView: ContentView(weatherAPI: WeatherAPIStub(.sunny))).view
     func testDefaultAppearance() {
         assertSnapshot(
             matching: view,
