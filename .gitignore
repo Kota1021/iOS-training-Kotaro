@@ -4,3 +4,5 @@
 .DS_Store
 iOS-trainingTests/LayoutPrototypeTests.swift
 iOS-training/LayoutPrototype.swift
+BuildTools/.build
+BuildTools/.swiftpm.

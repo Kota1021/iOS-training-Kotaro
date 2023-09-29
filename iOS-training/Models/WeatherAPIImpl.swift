@@ -25,7 +25,7 @@ struct WeatherAPIImpl: WeatherAPI {
     }
 }
 
-fileprivate let dateFormatter: DateFormatter = {
+private let dateFormatter: DateFormatter = {
     let dateFormatter = DateFormatter()
     // 末尾のZはZulu timeの略
     // c.f. https://qiita.com/yosshi4486/items/6703c9f42d9b33c936e7
