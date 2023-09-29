@@ -29,6 +29,12 @@ struct LayoutPrototype: View {
         }
     }
 
+    init(weatherAPI: WeatherAPI) {
+        self.weatherAPI = weatherAPI
+
+        _weatherFetchResult = State(initialValue: weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date()))
+    }
+
     var body: some View {
         GeometryReader { geometry in
 

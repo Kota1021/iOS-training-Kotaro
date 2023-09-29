@@ -9,13 +9,17 @@ import Foundation
 import YumemiWeather
 
 struct WeatherAPIStub: WeatherAPI {
+    let weather: Weather
+    init(_ weather: Weather? = nil) {
+        self.weather = weather ?? Weather.allCases.randomElement()!
+    }
+
     func fetchWeatherCondition(in _: String, at _: Date) -> Result<WeatherDateTemperature, Error> {
         let date = Date(timeIntervalSince1970: 0)
-        let randomWeather = Weather.allCases.randomElement()!
         let weatherDateTemperature = WeatherDateTemperature(maxTemperature: 30,
                                                             date: date,
                                                             minTemperature: 20,
-                                                            weatherCondition: randomWeather)
+                                                            weatherCondition: weather)
         return Result(catching: { weatherDateTemperature })
     }
 }
