@@ -49,11 +49,18 @@ struct ContentView: View {
 
     var body: some View {
         VStack(alignment: .center, spacing: .zero) {
-            WeatherIcon(weatherInfo?.weatherCondition)
-                .containerRelativeFrame(.horizontal) { length, _ in
-                    length / 2
-                }
-
+            if fetchState == .fetching {
+                ProgressView()
+                    .progressViewStyle(.circular)
+                    .containerRelativeFrame([.horizontal,.vertical]) { length, _ in
+                        length / 2
+                    }
+            } else {
+                WeatherIcon(weatherInfo?.weatherCondition)
+                    .containerRelativeFrame([.horizontal,.vertical]) { length, _ in
+                        length / 2
+                    }
+            }
             HStack(spacing: .zero) {
                 Text(minTemperature)
                     .foregroundStyle(.blue)
@@ -96,14 +103,16 @@ struct ContentView: View {
 
     func fetchWeather() {
         fetchState = .fetching
-        let result = weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date())
+        Task {
+        let result = await weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date())
+       
         do {
             let weatherDateTemperature = try result.get()
             fetchState = .succeeded(weatherDateTemperature)
         } catch {
             fetchState = .failed(error)
         }
-        print(fetchState)
+        }
     }
 }
 
@@ -112,6 +121,18 @@ enum FetchState {
     case fetching
     case succeeded(WeatherDateTemperature)
     case failed(Error)
+}
+
+extension FetchState: Equatable {
+    static func == (lhs: FetchState, rhs: FetchState) -> Bool {
+        switch (lhs,rhs) {
+        case (beforeFetch,beforeFetch): true
+        case (fetching,fetching): true
+        case (succeeded(_),succeeded(_)): true
+        case (failed(_),failed(_)): true
+        default: false
+        }
+    }
 }
 
 #Preview {
