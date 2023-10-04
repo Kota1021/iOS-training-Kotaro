@@ -9,14 +9,13 @@ import SwiftUI
 
 struct ContentView: View {
     let weatherAPI: WeatherAPI
-    @State private var weatherFetchResult: Result<WeatherDateTemperature, Error>?
+    @State private var fetchState: FetchState = .beforeFetch
 
     var weatherInfo: WeatherDateTemperature? {
-        switch weatherFetchResult {
-        case let .success(weatherDateTemperature):
-            return weatherDateTemperature
-        default:
-            return nil
+        if case let .succeeded(weatherDateTemperature) = fetchState {
+            weatherDateTemperature
+        } else {
+            nil
         }
     }
 
@@ -37,11 +36,10 @@ struct ContentView: View {
     }
 
     var error: Error? {
-        switch weatherFetchResult {
-        case let .failure(error):
-            return error
-        default:
-            return nil
+        if case let .failed(error) = fetchState {
+            error
+        } else {
+            nil
         }
     }
 
@@ -76,7 +74,7 @@ struct ContentView: View {
                         length / 4
                     }
                 Button("Reload") {
-                    weatherFetchResult = weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date())
+                    fetchWeather()
                 }
                 .containerRelativeFrame(.horizontal) { length, _ in
                     length / 4
@@ -84,19 +82,36 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            weatherFetchResult = weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date())
+            fetchWeather()
         }
         .alert("Error", isPresented: Binding(
             get: { error != nil },
             set: { isPresented in
-                if !isPresented { weatherFetchResult = nil }
+                if !isPresented { fetchState = .beforeFetch }
             }
         )) { /* Buttons */ } message: {
-            if case let .failure(error) = weatherFetchResult {
-                Text(error.localizedDescription)
-            }
+            Text(error?.localizedDescription ?? "__")
         }
     }
+
+    func fetchWeather() {
+        fetchState = .fetching
+        let result = weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date())
+        do {
+            let weatherDateTemperature = try result.get()
+            fetchState = .succeeded(weatherDateTemperature)
+        } catch {
+            fetchState = .failed(error)
+        }
+        print(fetchState)
+    }
+}
+
+enum FetchState {
+    case beforeFetch
+    case fetching
+    case succeeded(WeatherDateTemperature)
+    case failed(Error)
 }
 
 #Preview {
