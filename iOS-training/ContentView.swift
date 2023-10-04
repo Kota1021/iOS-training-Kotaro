@@ -34,47 +34,48 @@ struct ContentView: View {
     }
 
     var body: some View {
-        GeometryReader { geometry in
-
-            let imageSideLength = geometry.size.width / 2
-            let temperatureWidth = geometry.size.width / 4
-            let buttonWidth = geometry.size.width / 4
-
-            VStack(alignment: .center, spacing: .zero) {
-                WeatherIcon(weatherInfo?.weatherCondition)
-                    .frame(width: imageSideLength,
-                           height: imageSideLength)
-
-                HStack(spacing: .zero) {
-                    let (minTemperature, maxTemperature) = if let weatherInfo {
-                        (String(weatherInfo.minTemperature),
-                         String(weatherInfo.maxTemperature))
-                    } else {
-                        ("--", "--")
-                    }
-
-                    Text(minTemperature)
-                        .foregroundStyle(.blue)
-                        .frame(width: temperatureWidth)
-                    Text(maxTemperature)
-                        .foregroundStyle(.red)
-                        .frame(width: temperatureWidth)
+        VStack(alignment: .center, spacing: .zero) {
+            WeatherIcon(weatherInfo?.weatherCondition)
+                .containerRelativeFrame(.horizontal) { length, _ in
+                    length / 2
                 }
-                .padding(.bottom, 80)
 
-                HStack(spacing: .zero) {
-                    Button("Close") {}
-                        .frame(width: buttonWidth)
-                    Button("Reload") {
-                        weatherFetchResult = weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date())
+            HStack(spacing: .zero) {
+                let (minTemperature, maxTemperature) = if let weatherInfo {
+                    (String(weatherInfo.minTemperature),
+                     String(weatherInfo.maxTemperature))
+                } else {
+                    ("--", "--")
+                }
+
+                Text(minTemperature)
+                    .foregroundStyle(.blue)
+                    .containerRelativeFrame(.horizontal) { length, _ in
+                        length / 4
                     }
-                    .frame(width: buttonWidth)
+                Text(maxTemperature)
+                    .foregroundStyle(.red)
+                    .containerRelativeFrame(.horizontal) { length, _ in
+                        length / 4
+                    }
+            }
+            .padding(.bottom, 80)
+
+            HStack(spacing: .zero) {
+                Button("Close") {}
+                    .containerRelativeFrame(.horizontal) { length, _ in
+                        length / 4
+                    }
+                Button("Reload") {
+                    weatherFetchResult = weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date())
+                }
+                .containerRelativeFrame(.horizontal) { length, _ in
+                    length / 4
                 }
             }
-            .frame(width: geometry.size.width, height: geometry.size.height)
-            .onAppear {
-                weatherFetchResult = weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date())
-            }
+        }
+        .onAppear {
+            weatherFetchResult = weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date())
         }
         .alert("Error", isPresented: Binding(
             get: { error != nil },
