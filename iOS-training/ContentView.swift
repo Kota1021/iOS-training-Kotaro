@@ -20,6 +20,22 @@ struct ContentView: View {
         }
     }
 
+    var minTemperature: String {
+        if let weatherInfo {
+            String(weatherInfo.minTemperature)
+        } else {
+            "--"
+        }
+    }
+
+    var maxTemperature: String {
+        if let weatherInfo {
+            String(weatherInfo.maxTemperature)
+        } else {
+            "--"
+        }
+    }
+
     var error: Error? {
         switch weatherFetchResult {
         case let .failure(error):
@@ -41,13 +57,6 @@ struct ContentView: View {
                 }
 
             HStack(spacing: .zero) {
-                let (minTemperature, maxTemperature) = if let weatherInfo {
-                    (String(weatherInfo.minTemperature),
-                     String(weatherInfo.maxTemperature))
-                } else {
-                    ("--", "--")
-                }
-
                 Text(minTemperature)
                     .foregroundStyle(.blue)
                     .containerRelativeFrame(.horizontal) { length, _ in
