@@ -2,5 +2,7 @@
 !*.xcodeproj/project.pbxproj
 !*.xcworkspace/contents.xcworkspacedata
 .DS_Store
-iOS-trainingTests/LayoutPrototypeTests.swift
-iOS-training/LayoutPrototype.swift
+
+# SwiftFormat
+BuildTools/.build
+BuildTools/.swiftpm
