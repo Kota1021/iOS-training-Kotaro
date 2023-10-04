@@ -31,8 +31,6 @@ struct ContentView: View {
 
     init(weatherAPI: WeatherAPI) {
         self.weatherAPI = weatherAPI
-
-        _weatherFetchResult = State(initialValue: weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date()))
     }
 
     var body: some View {
@@ -74,6 +72,9 @@ struct ContentView: View {
                 }
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
+            .onAppear {
+                weatherFetchResult = weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date())
+            }
         }
         .alert("Error", isPresented: Binding(
             get: { error != nil },
