@@ -26,6 +26,10 @@ struct ContentView: View {
         (weatherInfo?.maxTemperature).map(String.init) ?? "--"
     }
 
+    private var isFetching: Bool {
+        weatherFetchManager.isFetching
+    }
+
     private var error: Error? {
         weatherFetchManager.error
     }
@@ -43,7 +47,18 @@ struct ContentView: View {
                     length / 2
                 }
                 .overlay {
-                    WeatherIcon(weatherInfo?.weatherCondition)
+                    ZStack {
+                        WeatherIcon(weatherInfo?.weatherCondition)
+                        if isFetching {
+                            ProgressView()
+                                .progressViewStyle(.circular)
+                                .padding()
+                                .background {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .foregroundStyle(.ultraThinMaterial)
+                                }
+                        }
+                    }
                 }
 
             HStack(spacing: .zero) {

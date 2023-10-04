@@ -9,12 +9,18 @@ import Foundation
 
 @Observable
 class FetchManager<Product> {
-    init(for process: @escaping () throws -> Product) {
+    init(for process: @escaping () async throws -> Product) {
         self.process = process
     }
     
-    private var process: () throws -> Product
+    private var process: () async throws -> Product
     
+    private var task: Task<Void, Never>? {
+        willSet { task?.cancel() }
+    }
+    
+    private(set) var isFetching = false
+
     var fetched: Product? {
         if case let .succeeded(weatherDateTemperature) = fetchState {
             weatherDateTemperature
@@ -39,12 +45,24 @@ class FetchManager<Product> {
     }
 
     func fetch() {
+        task = Task {
+            isFetching = true
             do {
-                let weatherDateTemperature = try process()
-                fetchState = .succeeded(weatherDateTemperature)
+                let product = try await process()
+                guard !Task.isCancelled else {
+                    isFetching = false
+                    return
+                }
+                fetchState = .succeeded(product)
             } catch {
+                guard !Task.isCancelled else {
+                    isFetching = false
+                    return
+                }
                 fetchState = .failed(error)
             }
+            isFetching = false
+        }
     }
 
     func reset() {
