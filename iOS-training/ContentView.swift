@@ -69,10 +69,13 @@ struct ContentView: View {
             .padding(.bottom, 80)
 
             HStack(spacing: .zero) {
-                Button("Close") {}
-                    .containerRelativeFrame(.horizontal) { length, _ in
-                        length / 4
-                    }
+                Button("Close") {
+                    /* https://github.com/yumemi-inc/ios-training/blob/main/Documentation/VC_Lifecycle.md
+                     SwiftUIで「UIViewControllerのライフサイクルの動作を確認する」ことに相当するような実装が思いつかなかったためスキップ */
+                }
+                .containerRelativeFrame(.horizontal) { length, _ in
+                    length / 4
+                }
                 Button("Reload") {
                     fetchWeather()
                 }
