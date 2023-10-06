@@ -16,8 +16,9 @@ class LayoutPrototypeTests: XCTestCase {
     private let view: UIView = UIHostingController(rootView: ContentView(weatherAPI: WeatherAPIStub(.sunny))).view
     func testDefaultAppearance() {
         assertSnapshot(
-            matching: view,
-            as: .image(size: referenceSize)
+            of: view,
+            as: .image(size: referenceSize),
+            record: false // return true to make a new reference snapshot
         )
     }
 }
