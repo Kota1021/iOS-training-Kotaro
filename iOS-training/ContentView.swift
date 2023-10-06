@@ -49,9 +49,14 @@ struct ContentView: View {
 
     var body: some View {
         VStack(alignment: .center, spacing: .zero) {
-            WeatherIcon(weatherInfo?.weatherCondition)
+            // Setting WeatherIcon to be square
+            Color.clear
+                .aspectRatio(1, contentMode: .fit)
                 .containerRelativeFrame(.horizontal) { length, _ in
                     length / 2
+                }
+                .overlay {
+                    WeatherIcon(weatherInfo?.weatherCondition)
                 }
 
             HStack(spacing: .zero) {
