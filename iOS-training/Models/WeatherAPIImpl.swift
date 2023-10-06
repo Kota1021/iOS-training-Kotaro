@@ -37,6 +37,7 @@ struct WeatherRequestEncoder {
     func generateRequestJSON(area: String, date: Date) throws -> String {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .formatted(dateFormatter)
+        encoder.outputFormatting = .sortedKeys
 
         let areaDateJSONData = try encoder.encode(AreaDate(area: area, date: date))
         let areaDateJSON = String(data: areaDateJSONData, encoding: .utf8)
