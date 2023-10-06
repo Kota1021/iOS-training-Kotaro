@@ -9,18 +9,12 @@ import Foundation
 import YumemiWeather
 
 struct WeatherAPIImpl: WeatherAPI {
-    func fetchWeatherCondition(in area: String, at date: Date) -> Result<WeatherDateTemperature, Error> {
+    func fetchWeatherCondition(in area: String, at date: Date) throws -> WeatherDateTemperature {
         // MARK: Encoding into input JSON String
-
-        let weatherDateTemperature = Result<WeatherDateTemperature, Error> {
-            // MARK: Decoding from output JSON String
-
-            let requestJSON = try WeatherRequestGenerator().generate(area: area, date: date)
-            let fetchedWeatherJSON = try YumemiWeather.fetchWeather(requestJSON) // may throw YumemiWeatherError.invalidParameterError and \.unknownError
-            let weatherDateTemperature = try WeatherDateTemperatureGenerator().generate(from: fetchedWeatherJSON)
-            return weatherDateTemperature
-        }
-
+        
+        let requestJSON = try WeatherRequestGenerator().generate(area: area, date: date)
+        let fetchedWeatherJSON = try YumemiWeather.fetchWeather(requestJSON) // may throw YumemiWeatherError.invalidParameterError and \.unknownError
+        let weatherDateTemperature = try WeatherDateTemperatureGenerator().generate(from: fetchedWeatherJSON)
         return weatherDateTemperature
     }
 }

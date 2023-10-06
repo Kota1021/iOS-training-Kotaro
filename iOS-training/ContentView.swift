@@ -97,9 +97,8 @@ struct ContentView: View {
     }
 
     func fetchWeather() {
-        let result = weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date())
         do {
-            let weatherDateTemperature = try result.get()
+            let weatherDateTemperature = try weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date())
             fetchedWeather = .succeeded(weatherDateTemperature)
         } catch {
             fetchedWeather = .failed(error)

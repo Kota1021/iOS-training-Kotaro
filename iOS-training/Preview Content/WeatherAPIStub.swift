@@ -14,13 +14,13 @@ struct WeatherAPIStub: WeatherAPI {
         self.weather = weather
     }
 
-    func fetchWeatherCondition(in _: String, at _: Date) -> Result<WeatherDateTemperature, Error> {
+    func fetchWeatherCondition(in _: String, at _: Date) throws -> WeatherDateTemperature {
         let date = Date(timeIntervalSince1970: 0)
         let weather = weather ?? Weather.allCases.randomElement()!
         let weatherDateTemperature = WeatherDateTemperature(maxTemperature: 30,
                                                             date: date,
                                                             minTemperature: 20,
                                                             weatherCondition: weather)
-        return Result(catching: { weatherDateTemperature })
+        return weatherDateTemperature
     }
 }
