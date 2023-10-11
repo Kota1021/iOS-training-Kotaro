@@ -30,4 +30,51 @@ struct WeatherAPIStub: WeatherAPI {
         )
         return weatherInfo
     }
+
+    func fetchWeatherList(in _: [String], at _: Date) async throws -> [AreaWeather] {
+        var areaWeatherList = [AreaWeather]()
+        let areas = [
+            "Sapporo",
+            "Sendai",
+            "Niigata",
+            "Kanazawa",
+            "Tokyo",
+            "Nagoya",
+            "Osaka",
+            "Hiroshima",
+            "Kochi",
+            "Fukuoka",
+            "Kagoshima",
+            "Naha",
+        ]
+            
+        for (index, area) in zip(areas.indices, areas) {
+            let date = Date(timeIntervalSince1970: 0)
+            let weatherCondition = switch index {
+            case 0: Weather.sunny
+            case 1: Weather.cloudy
+            case 2: Weather.rainy
+            default: Weather.sunny
+            }
+            
+            let weatherInfo = WeatherInfo(
+                maxTemperature: 30 + index,
+                date: date,
+                minTemperature: 20 + index,
+                weatherCondition: weatherCondition
+            )
+            let areaWeather = AreaWeather(area: area, info: weatherInfo)
+            areaWeatherList.append(areaWeather)
+        }
+        return areaWeatherList
+    }
+
+    static let weatherInfo = WeatherInfo(
+        maxTemperature: 30,
+        date: Date(),
+        minTemperature: 20,
+        weatherCondition: .sunny
+    )
+
+    static let areaWeather = AreaWeather(area: "tokyo", info: weatherInfo)
 }

@@ -9,8 +9,8 @@ import SwiftUI
 
 @main
 struct iOS_trainingApp: App {
-    private let weatherFetchManager: FetchTaskManager<WeatherInfo> = {
-        let fetchingMethod = { try await WeatherAPIImpl().fetchWeatherInfo(in: "tokyo", at: Date()) }
+    private let weatherFetchManager: FetchTaskManager<[AreaWeather]> = {
+        let fetchingMethod = { try await WeatherAPIImpl().fetchWeatherList(in: [], at: Date()) }
         return FetchTaskManager(for: fetchingMethod)
     }()
     

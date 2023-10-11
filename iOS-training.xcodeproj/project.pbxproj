@@ -10,9 +10,12 @@
 		3510B2BF2A5E68EB00ADAD10 /* YumemiWeather in Frameworks */ = {isa = PBXBuildFile; productRef = 3510B2BE2A5E68EB00ADAD10 /* YumemiWeather */; };
 		351DE9E52AD8EA1200227215 /* FetchTaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 351DE9E42AD8EA1200227215 /* FetchTaskManager.swift */; };
 		353A7C312A5D33840038391A /* SwiftFormat in Frameworks */ = {isa = PBXBuildFile; productRef = 353A7C302A5D33840038391A /* SwiftFormat */; };
+		3557CCA72AD64B85003575C5 /* AreaWeatherRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3557CCA62AD64B85003575C5 /* AreaWeatherRow.swift */; };
 		356626F12AE2507100466C7E /* FetchStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356626F02AE2507100466C7E /* FetchStateMachine.swift */; };
 		357FE9482A5EA08100F02DA9 /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357FE9472A5EA08100F02DA9 /* Weather.swift */; };
 		35A342A92ADFD588003FE3BF /* Result+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35A342A82ADFD588003FE3BF /* Result+Extension.swift */; };
+		35C87E692ACFB07B00121349 /* AreaWeatherDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C87E682ACFB07B00121349 /* AreaWeatherDetail.swift */; };
+		35C87E6B2ACFB4C100121349 /* AreaWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C87E6A2ACFB4C100121349 /* AreaWeather.swift */; };
 		35CF2A282A5FC66D001D6E24 /* WeatherAPIImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CF2A272A5FC66D001D6E24 /* WeatherAPIImpl.swift */; };
 		35DB58D22A5BB42900EFF284 /* iOS_trainingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DB58D12A5BB42900EFF284 /* iOS_trainingApp.swift */; };
 		35DB58D42A5BB42900EFF284 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DB58D32A5BB42900EFF284 /* ContentView.swift */; };
@@ -49,9 +52,12 @@
 
 /* Begin PBXFileReference section */
 		351DE9E42AD8EA1200227215 /* FetchTaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchTaskManager.swift; sourceTree = "<group>"; };
+		3557CCA62AD64B85003575C5 /* AreaWeatherRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AreaWeatherRow.swift; sourceTree = "<group>"; };
 		356626F02AE2507100466C7E /* FetchStateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchStateMachine.swift; sourceTree = "<group>"; };
 		357FE9472A5EA08100F02DA9 /* Weather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weather.swift; sourceTree = "<group>"; };
 		35A342A82ADFD588003FE3BF /* Result+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Extension.swift"; sourceTree = "<group>"; };
+		35C87E682ACFB07B00121349 /* AreaWeatherDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AreaWeatherDetail.swift; sourceTree = "<group>"; };
+		35C87E6A2ACFB4C100121349 /* AreaWeather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AreaWeather.swift; sourceTree = "<group>"; };
 		35CF2A272A5FC66D001D6E24 /* WeatherAPIImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherAPIImpl.swift; sourceTree = "<group>"; };
 		35DB58CE2A5BB42900EFF284 /* iOS-training.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS-training.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		35DB58D12A5BB42900EFF284 /* iOS_trainingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOS_trainingApp.swift; sourceTree = "<group>"; };
@@ -113,6 +119,8 @@
 			isa = PBXGroup;
 			children = (
 				35DB58D32A5BB42900EFF284 /* ContentView.swift */,
+				3557CCA62AD64B85003575C5 /* AreaWeatherRow.swift */,
+				35C87E682ACFB07B00121349 /* AreaWeatherDetail.swift */,
 				35FA06AD2A610BD4000A99D7 /* WeatherIcon.swift */,
 			);
 			path = Views;
@@ -125,6 +133,7 @@
 				35FD895F2AC3EC5E002E6D69 /* WeatherAPI.swift */,
 				35CF2A272A5FC66D001D6E24 /* WeatherAPIImpl.swift */,
 				35FA06AA2A60D759000A99D7 /* WeatherInfo.swift */,
+				35C87E6A2ACFB4C100121349 /* AreaWeather.swift */,
 			);
 			path = CoreModels;
 			sourceTree = "<group>";
@@ -357,6 +366,9 @@
 			files = (
 				35CF2A282A5FC66D001D6E24 /* WeatherAPIImpl.swift in Sources */,
 				35A342A92ADFD588003FE3BF /* Result+Extension.swift in Sources */,
+				35C87E6B2ACFB4C100121349 /* AreaWeather.swift in Sources */,
+				35C87E692ACFB07B00121349 /* AreaWeatherDetail.swift in Sources */,
+				3557CCA72AD64B85003575C5 /* AreaWeatherRow.swift in Sources */,
 				35FA06AE2A610BD4000A99D7 /* WeatherIcon.swift in Sources */,
 				356626F12AE2507100466C7E /* FetchStateMachine.swift in Sources */,
 				35DD0CD12AC68C8F0083A461 /* WeatherAPIStub.swift in Sources */,

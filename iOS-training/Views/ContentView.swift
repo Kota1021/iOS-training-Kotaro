@@ -8,22 +8,13 @@
 import SwiftUI
 
 struct ContentView: View {
-    init(weatherFetchManager: FetchTaskManager<WeatherInfo>) {
+    init(weatherFetchManager: FetchTaskManager<[AreaWeather]>) {
         _weatherFetchManager = State(initialValue: weatherFetchManager)
     }
 
-    @State private var weatherFetchManager: FetchTaskManager<WeatherInfo>
-
-    private var weatherInfo: WeatherInfo? {
-        weatherFetchManager.fetched
-    }
-
-    private var minTemperature: String {
-        (weatherInfo?.minTemperature).map(String.init) ?? "--"
-    }
-
-    private var maxTemperature: String {
-        (weatherInfo?.maxTemperature).map(String.init) ?? "--"
+    @State private var weatherFetchManager: FetchTaskManager<[AreaWeather]>
+    private var areaWeatherList: [AreaWeather] {
+        weatherFetchManager.fetched ?? []
     }
 
     private var isFetching: Bool {
@@ -39,71 +30,63 @@ struct ContentView: View {
     }
 
     var body: some View {
-        VStack(alignment: .center, spacing: .zero) {
-            // Setting WeatherIcon to be square
-            Color.clear
-                .aspectRatio(1, contentMode: .fit)
-                .containerRelativeFrame(.horizontal) { length, _ in
-                    length / 2
-                }
-                .overlay {
-                    ZStack {
-                        WeatherIcon(weatherInfo?.weatherCondition)
-                        if isFetching {
-                            ProgressView()
-                                .progressViewStyle(.circular)
-                                .padding()
-                                .background {
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .foregroundStyle(.ultraThinMaterial)
-                                }
-                        }
+        NavigationStack {
+            VStack {
+                List(areaWeatherList) { areaWeather in
+                    NavigationLink(value: areaWeather) {
+                        AreaWeatherRow(areaWeather)
                     }
                 }
-
-            HStack(spacing: .zero) {
-                Text(minTemperature)
-                    .foregroundStyle(.blue)
+            
+                // TODO: when pulling to reflesh, hide overlayed ProgressView
+                .refreshable { weatherFetchManager.fetch() }
+                .navigationDestination(for: AreaWeather.self) { areaWeather in
+                    AreaWeatherDetail(weatherInfo: areaWeather.info)
+                        .navigationTitle(areaWeather.area)
+                }
+                .navigationTitle("Cities")
+                .navigationBarTitleDisplayMode(.large)
+        
+                HStack(spacing: .zero) {
+                    Button("Close") {
+                        /* https://github.com/yumemi-inc/ios-training/blob/main/Documentation/VC_Lifecycle.md
+                         SwiftUIで「UIViewControllerのライフサイクルの動作を確認する」ことに相当するような実装が思いつかなかったためスキップ */
+                    }
                     .containerRelativeFrame(.horizontal) { length, _ in
                         length / 4
                     }
-
-                Text(maxTemperature)
-                    .foregroundStyle(.red)
+                    Button("Reload") {
+                        weatherFetchManager.fetch()
+                    }
                     .containerRelativeFrame(.horizontal) { length, _ in
                         length / 4
                     }
+                }
             }
-            .padding(.bottom, 80)
-
-            HStack(spacing: .zero) {
-                Button("Close") {
-                    /* https://github.com/yumemi-inc/ios-training/blob/main/Documentation/VC_Lifecycle.md
-                     SwiftUIで「UIViewControllerのライフサイクルの動作を確認する」ことに相当するような実装が思いつかなかったためスキップ */
+            .overlay {
+                if isFetching {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .padding()
+                        .background {
+                            RoundedRectangle(cornerRadius: 10)
+                                .foregroundStyle(.ultraThinMaterial)
+                        }
                 }
-                .containerRelativeFrame(.horizontal) { length, _ in
-                    length / 4
-                }
-                Button("Reload") {
+            }
+            .alert("Error", isPresented: .constant(error != nil)) {
+                Button("YES") {
+                    weatherFetchManager.reset()
                     weatherFetchManager.fetch()
                 }
-                .containerRelativeFrame(.horizontal) { length, _ in
-                    length / 4
-                }
+            } message: {
+                Text(errorMessage)
             }
-        }
-        .task {
-            weatherFetchManager.fetch()
-        }
-        .alert("Error", isPresented: .constant(error != nil)) {
-            Button("YES") { weatherFetchManager.reset() }
-        } message: {
-            Text(errorMessage)
         }
     }
 }
 
 #Preview {
-    let fetchingMethod = { try await WeatherAPIStub().fetchWeatherInfo(in: "tokyo", at: Date()) }
+    let fetchingMethod = { try await WeatherAPIStub().fetchWeatherList(in: [], at: Date()) }
     return ContentView(weatherFetchManager: FetchTaskManager(for: fetchingMethod))
 }
