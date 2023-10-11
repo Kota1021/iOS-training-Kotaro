@@ -10,3 +10,6 @@ enum Weather: String, Decodable {
     case cloudy
     case rainy
 }
+
+// Conform to CaseIterable to pick a random element for Preview
+extension Weather: CaseIterable {}
