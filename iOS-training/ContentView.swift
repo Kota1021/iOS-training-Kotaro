@@ -83,7 +83,7 @@ struct ContentView: View {
                 }
             }
         }
-        .onAppear {
+        .task {
             fetchWeather()
         }
         .alert("Error", isPresented: Binding(
