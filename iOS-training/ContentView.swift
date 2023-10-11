@@ -21,19 +21,11 @@ struct ContentView: View {
     }
 
     private var minTemperature: String {
-        if let weatherInfo {
-            String(weatherInfo.minTemperature)
-        } else {
-            "--"
-        }
+        (weatherInfo?.minTemperature).map(String.init) ?? "--"
     }
 
     private var maxTemperature: String {
-        if let weatherInfo {
-            String(weatherInfo.maxTemperature)
-        } else {
-            "--"
-        }
+        (weatherInfo?.maxTemperature).map(String.init) ?? "--"
     }
 
     private var error: Error? {
