@@ -9,21 +9,25 @@ import Foundation
 import YumemiWeather
 
 struct WeatherAPIStub: WeatherAPI {
-    func fetchWeatherCondition(in _: String, at _: Date) async throws -> WeatherDateTemperature {
+    func fetchWeatherInfo(in _: String, at _: Date) async throws -> WeatherInfo {
         let date = Date(timeIntervalSince1970: 0)
-        let weatherDateTemperature = WeatherDateTemperature(maxTemperature: 30,
-                                                            date: date,
-                                                            minTemperature: 20,
-                                                            weatherCondition: Weather.allCases.randomElement()!)
-        return weatherDateTemperature
+        let weatherInfo = WeatherInfo(
+            maxTemperature: 30,
+            date: date,
+            minTemperature: 20,
+            weatherCondition: Weather.allCases.randomElement()!
+        )
+        return weatherInfo
     }
     
-    func fetchWeatherCondition(of weather: Weather) -> WeatherDateTemperature {
+    func fetchWeatherInfo(of weather: Weather) -> WeatherInfo {
         let date = Date(timeIntervalSince1970: 0)
-        let weatherDateTemperature = WeatherDateTemperature(maxTemperature: 30,
-                                                            date: date,
-                                                            minTemperature: 20,
-                                                            weatherCondition: weather)
-        return weatherDateTemperature
+        let weatherInfo = WeatherInfo(
+            maxTemperature: 30,
+            date: date,
+            minTemperature: 20,
+            weatherCondition: weather
+        )
+        return weatherInfo
     }
 }

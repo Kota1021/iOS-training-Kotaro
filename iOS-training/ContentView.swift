@@ -8,13 +8,13 @@
 import SwiftUI
 
 struct ContentView: View {
-    init(weatherFetchManager: FetchTaskManager<WeatherDateTemperature>) {
+    init(weatherFetchManager: FetchTaskManager<WeatherInfo>) {
         _weatherFetchManager = State(initialValue: weatherFetchManager)
     }
 
-    @State private var weatherFetchManager: FetchTaskManager<WeatherDateTemperature>
+    @State private var weatherFetchManager: FetchTaskManager<WeatherInfo>
 
-    private var weatherInfo: WeatherDateTemperature? {
+    private var weatherInfo: WeatherInfo? {
         weatherFetchManager.fetched
     }
 
@@ -104,6 +104,6 @@ struct ContentView: View {
 }
 
 #Preview {
-    let fetchingMethod = { try await WeatherAPIStub().fetchWeatherCondition(in: "tokyo", at: Date()) }
+    let fetchingMethod = { try await WeatherAPIStub().fetchWeatherInfo(in: "tokyo", at: Date()) }
     return ContentView(weatherFetchManager: FetchTaskManager(for: fetchingMethod))
 }

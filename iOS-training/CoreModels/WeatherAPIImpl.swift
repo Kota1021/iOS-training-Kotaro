@@ -9,13 +9,11 @@ import Foundation
 import YumemiWeather
 
 struct WeatherAPIImpl: WeatherAPI {
-    func fetchWeatherCondition(in area: String, at date: Date) async throws -> WeatherDateTemperature {
-        // MARK: Encoding into input JSON String
-        
+    func fetchWeatherInfo(in area: String, at date: Date) async throws -> WeatherInfo {
         let requestJSON = try WeatherRequestGenerator().generate(area: area, date: date)
         let fetchedWeatherJSON = try await YumemiWeather.asyncFetchWeather(requestJSON) // may throw YumemiWeatherError.invalidParameterError and \.unknownError
-        let weatherDateTemperature = try WeatherDateTemperatureGenerator().generate(from: fetchedWeatherJSON)
-        return weatherDateTemperature
+        let weatherInfo = try WeatherInfoGenerator().generate(from: fetchedWeatherJSON)
+        return weatherInfo
     }
 }
 
@@ -61,9 +59,7 @@ struct WeatherRequestGenerator {
     }
 }
 
-struct WeatherDateTemperatureGenerator {
-    // MARK: - output
-
+struct WeatherInfoGenerator {
     private let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .formatted(dateFormatter)
@@ -71,8 +67,8 @@ struct WeatherDateTemperatureGenerator {
         return decoder
     }()
     
-    func generate(from json: String) throws -> WeatherDateTemperature {
-        let weatherDateTemperature = try decoder.decode(WeatherDateTemperature.self, from: Data(json.utf8))
-        return weatherDateTemperature
+    func generate(from json: String) throws -> WeatherInfo {
+        let weatherInfo = try decoder.decode(WeatherInfo.self, from: Data(json.utf8))
+        return weatherInfo
     }
 }

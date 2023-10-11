@@ -15,8 +15,8 @@ private let referenceSize = CGSize(width: 300, height: 300)
 class LayoutPrototypeTests: XCTestCase {
     private let view: UIView = {
         // Setting up weatherFetchManager
-        let fetchingMethod = { WeatherAPIStub().fetchWeatherCondition(of: .sunny) }
-        let weatherFetchManager: FetchTaskManager<WeatherDateTemperature> = FetchTaskManager(for: fetchingMethod)
+        let fetchingMethod = { WeatherAPIStub().fetchWeatherInfo(of: .sunny) }
+        let weatherFetchManager: FetchTaskManager<WeatherInfo> = FetchTaskManager(for: fetchingMethod)
         weatherFetchManager.fetch()
         return UIHostingController(rootView: ContentView(weatherFetchManager: weatherFetchManager)).view
     }()
