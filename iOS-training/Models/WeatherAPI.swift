@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftUI
 protocol WeatherAPI {
     func fetchWeatherCondition(in area: String, at date: Date) -> Result<WeatherDateTemperature, Error>
 }

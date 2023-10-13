@@ -8,83 +8,108 @@
 import SwiftUI
 
 struct ContentView: View {
-    let weatherAPI: WeatherAPI
-    @State private var weatherFetchResult: Result<WeatherDateTemperature, Error>?
-
-    var weatherInfo: WeatherDateTemperature? {
-        switch weatherFetchResult {
-        case let .success(weatherDateTemperature):
-            return weatherDateTemperature
-        default:
-            return nil
+    private let weatherAPI: WeatherAPI
+    
+    @State private var fetchedWeather: FetchedWeather = .initial
+    
+    private var weatherInfo: WeatherDateTemperature? {
+        if case let .succeeded(weatherDateTemperature) = fetchedWeather {
+            weatherDateTemperature
+        } else {
+            nil
         }
     }
 
-    var error: Error? {
-        switch weatherFetchResult {
-        case let .failure(error):
-            return error
-        default:
-            return nil
+    private var minTemperature: String {
+        (weatherInfo?.minTemperature).map(String.init) ?? "--"
+    }
+
+    private var maxTemperature: String {
+        (weatherInfo?.maxTemperature).map(String.init) ?? "--"
+    }
+
+    private var error: Error? {
+        if case let .failed(error) = fetchedWeather {
+            error
+        } else {
+            nil
         }
     }
 
     init(weatherAPI: WeatherAPI) {
         self.weatherAPI = weatherAPI
-
-        _weatherFetchResult = State(initialValue: weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date()))
     }
 
     var body: some View {
-        GeometryReader { geometry in
-
-            let imageSideLength = geometry.size.width / 2
-            let temperatureWidth = geometry.size.width / 4
-            let buttonWidth = geometry.size.width / 4
-
-            VStack(alignment: .center, spacing: .zero) {
-                WeatherIcon(weatherInfo?.weatherCondition)
-                    .frame(width: imageSideLength,
-                           height: imageSideLength)
-
-                HStack(spacing: .zero) {
-                    let (minTemperature, maxTemperature) = if let weatherInfo {
-                        (String(weatherInfo.minTemperature),
-                         String(weatherInfo.maxTemperature))
-                    } else {
-                        ("--", "--")
-                    }
-
-                    Text(minTemperature)
-                        .foregroundStyle(.blue)
-                        .frame(width: temperatureWidth)
-                    Text(maxTemperature)
-                        .foregroundStyle(.red)
-                        .frame(width: temperatureWidth)
+        VStack(alignment: .center, spacing: .zero) {
+            // Setting WeatherIcon to be square
+            Color.clear
+                .aspectRatio(1, contentMode: .fit)
+                .containerRelativeFrame(.horizontal) { length, _ in
+                    length / 2
                 }
-                .padding(.bottom, 80)
+                .overlay {
+                    WeatherIcon(weatherInfo?.weatherCondition)
+                }
 
-                HStack(spacing: .zero) {
-                    Button("Close") {}
-                        .frame(width: buttonWidth)
-                    Button("Reload") {
-                        weatherFetchResult = weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date())
+            HStack(spacing: .zero) {
+                Text(minTemperature)
+                    .foregroundStyle(.blue)
+                    .containerRelativeFrame(.horizontal) { length, _ in
+                        length / 4
                     }
-                    .frame(width: buttonWidth)
+
+                Text(maxTemperature)
+                    .foregroundStyle(.red)
+                    .containerRelativeFrame(.horizontal) { length, _ in
+                        length / 4
+                    }
+            }
+            .padding(.bottom, 80)
+
+            HStack(spacing: .zero) {
+                Button("Close") {
+                    /* https://github.com/yumemi-inc/ios-training/blob/main/Documentation/VC_Lifecycle.md
+                     SwiftUIで「UIViewControllerのライフサイクルの動作を確認する」ことに相当するような実装が思いつかなかったためスキップ */
+                }
+                .containerRelativeFrame(.horizontal) { length, _ in
+                    length / 4
+                }
+                Button("Reload") {
+                    fetchWeather()
+                }
+                .containerRelativeFrame(.horizontal) { length, _ in
+                    length / 4
                 }
             }
-            .frame(width: geometry.size.width, height: geometry.size.height)
+        }
+        .task {
+            fetchWeather()
         }
         .alert("Error", isPresented: Binding(
             get: { error != nil },
             set: { isPresented in
-                if !isPresented { weatherFetchResult = nil }
+                if !isPresented { fetchedWeather = .initial }
             }
         )) { /* Buttons */ } message: {
-            if case let .failure(error) = weatherFetchResult {
-                Text(error.localizedDescription)
-            }
+            Text(error?.localizedDescription ?? "__")
         }
+    }
+
+    func fetchWeather() {
+        let result = weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date())
+        do {
+            let weatherDateTemperature = try result.get()
+            fetchedWeather = .succeeded(weatherDateTemperature)
+        } catch {
+            fetchedWeather = .failed(error)
+        }
+    }
+
+    enum FetchedWeather {
+        case initial
+        case succeeded(WeatherDateTemperature)
+        case failed(Error)
     }
 }
 
