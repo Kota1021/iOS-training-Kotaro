@@ -9,9 +9,9 @@ import SwiftUI
 
 struct ContentView: View {
     private let weatherAPI: WeatherAPI
-    
+
     @State private var fetchedWeather: FetchedWeather = .initial
-    
+
     private var weatherInfo: WeatherDateTemperature? {
         if case let .succeeded(weatherDateTemperature) = fetchedWeather {
             weatherDateTemperature
