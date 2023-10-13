@@ -28,6 +28,6 @@ struct WeatherIcon: View {
         icon
             .resizable()
             .scaledToFit()
-            .foregroundStyle(self.color)
+            .foregroundStyle(color)
     }
 }
