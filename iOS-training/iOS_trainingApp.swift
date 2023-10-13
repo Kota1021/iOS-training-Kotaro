@@ -11,7 +11,7 @@ import SwiftUI
 struct iOS_trainingApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView(weatherAPI: WeatherAPIImpl())
+            ContentView(weatherFetchManager: FetchManager(weatherAPI: WeatherAPIImpl()))
         }
     }
 }
