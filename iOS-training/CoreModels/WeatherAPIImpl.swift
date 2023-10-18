@@ -10,14 +10,28 @@ import YumemiWeather
 
 struct WeatherAPIImpl: WeatherAPI {
     func fetchWeatherInfo(in area: String, at date: Date) async throws -> WeatherInfo {
-        let requestJSON = try WeatherRequestGenerator().generate(area: area, date: date)
+        // Making Encodable Object
+        struct AreaDate: Encodable {
+            let area: String
+            let date: Date
+        }
+        
+        let areaDate = AreaDate(area: area, date: date)
+        let requestJSON = try JSONGenerator().generate(from: areaDate)
         let fetchedWeatherJSON = try await YumemiWeather.asyncFetchWeather(requestJSON) // may throw YumemiWeatherError.invalidParameterError and \.unknownError
         let weatherInfo: WeatherInfo = try ObjectGenerator().generate(from: fetchedWeatherJSON)
         return weatherInfo
     }
 
     func fetchWeatherList(in areas: [String], at date: Date) async throws -> [AreaWeather] {
-        let requestJSON = try AreaWeatherListRequestGenerator().generate(areas: areas, date: date)
+        // Making Encodable Object
+        struct AreasDate: Encodable {
+            let areas: [String]
+            let date: Date
+        }
+        
+        let areasDate = AreasDate(areas: areas, date: date)
+        let requestJSON = try JSONGenerator().generate(from: areasDate)
         let fetchedWeatherListJSON = try await YumemiWeather.asyncFetchWeatherList(requestJSON)
         let areaWeatherList: [AreaWeather] = try ObjectGenerator().generate(from: fetchedWeatherListJSON)
         return areaWeatherList
@@ -44,70 +58,28 @@ struct ObjectGenerator {
     }
 }
 
-struct WeatherRequestGenerator {
-    private let encoder: JSONEncoder = {
+// internal for test
+struct JSONGenerator {
+    func generate(from object: some Encodable) throws -> String {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .formatted(dateFormatter)
         encoder.outputFormatting = .sortedKeys
-        return encoder
-    }()
-    
-    func generate(area: String, date: Date) throws -> String {
-        let areaDateJSONData = try encoder.encode(AreaDate(area: area, date: date))
-        let areaDateJSON = String(data: areaDateJSONData, encoding: .utf8)
-        guard let areaDateJSON else {
-            throw JSONError.failedToStringify
-        }
-
-        return areaDateJSON
-    }
-
-    enum JSONError: Error, LocalizedError {
-        case failedToStringify
-        var errorDescription: String? {
-            switch self {
-            case .failedToStringify:
-                "failed to stringify JSON"
-            }
-        }
-    }
-
-    private struct AreaDate: Encodable {
-        let area: String
-        let date: Date
-    }
-}
-
-struct AreaWeatherListRequestGenerator {
-    private let encoder: JSONEncoder = {
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .formatted(dateFormatter)
-        encoder.outputFormatting = .sortedKeys
-        return encoder
-    }()
-    
-    func generate(areas: [String], date: Date) throws -> String {
-        let areaDateJSONData = try encoder.encode(AreasDate(areas: areas, date: date))
-        let areasDateJSON = String(data: areaDateJSONData, encoding: .utf8)
         
-        guard let areasDateJSON else {
+        let data = try encoder.encode(object)
+        let json = String(data: data, encoding: .utf8)
+        
+        guard let json else {
             throw JSONError.failedToStringify
         }
-        return areasDateJSON
+        return json
     }
     
     enum JSONError: Error, LocalizedError {
         case failedToStringify
         var errorDescription: String? {
             switch self {
-            case .failedToStringify:
-                "failed to stringify JSON"
+            case .failedToStringify: "failed to stringify JSON"
             }
         }
-    }
-
-    private struct AreasDate: Encodable {
-        let areas: [String]
-        let date: Date
     }
 }
