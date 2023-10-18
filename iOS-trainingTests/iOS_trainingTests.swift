@@ -39,6 +39,11 @@ final class iOS_trainingTests: XCTestCase {
         }
         """
 
-        XCTAssertNoThrow(try WeatherInfoGenerator().generate(from: inputJSON))
+        XCTAssertNoThrow(
+            // this closure is to infer Generic Type `WeatherInfo`
+            try { () throws -> WeatherInfo in
+                try ObjectGenerator().generate(from: inputJSON)
+            }()
+        )
     }
 }

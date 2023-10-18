@@ -12,19 +12,14 @@ struct WeatherAPIImpl: WeatherAPI {
     func fetchWeatherInfo(in area: String, at date: Date) async throws -> WeatherInfo {
         let requestJSON = try WeatherRequestGenerator().generate(area: area, date: date)
         let fetchedWeatherJSON = try await YumemiWeather.asyncFetchWeather(requestJSON) // may throw YumemiWeatherError.invalidParameterError and \.unknownError
-        let weatherInfo = try WeatherInfoGenerator().generate(from: fetchedWeatherJSON)
+        let weatherInfo: WeatherInfo = try ObjectGenerator().generate(from: fetchedWeatherJSON)
         return weatherInfo
     }
 
     func fetchWeatherList(in areas: [String], at date: Date) async throws -> [AreaWeather] {
-        // MARK: Encoding into input JSON String
-
         let requestJSON = try AreaWeatherListRequestGenerator().generate(areas: areas, date: date)
         let fetchedWeatherListJSON = try await YumemiWeather.asyncFetchWeatherList(requestJSON)
-
-        // MARK: Decoding from output JSON String
-
-        let areaWeatherList = try AreaWeatherListGenerator().generate(from: fetchedWeatherListJSON)
+        let areaWeatherList: [AreaWeather] = try ObjectGenerator().generate(from: fetchedWeatherListJSON)
         return areaWeatherList
     }
 }
@@ -37,9 +32,17 @@ private let dateFormatter: DateFormatter = {
     return dateFormatter
 }()
 
-// TODO: Generarize Generators for WeatherDateTemperature and AreaWeatherList
-
-// MARK: WeatherDateTemperature
+// internal for test
+struct ObjectGenerator {
+    func generate<Object: Decodable>(from json: String) throws -> Object {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .formatted(dateFormatter)
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+            
+        let object = try decoder.decode(Object.self, from: Data(json.utf8))
+        return object
+    }
+}
 
 struct WeatherRequestGenerator {
     private let encoder: JSONEncoder = {
@@ -75,22 +78,6 @@ struct WeatherRequestGenerator {
     }
 }
 
-struct WeatherInfoGenerator {
-    private let decoder: JSONDecoder = {
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .formatted(dateFormatter)
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        return decoder
-    }()
-    
-    func generate(from json: String) throws -> WeatherInfo {
-        let weatherInfo = try decoder.decode(WeatherInfo.self, from: Data(json.utf8))
-        return weatherInfo
-    }
-}
-
-// MARK: AreaWeatherList
-
 struct AreaWeatherListRequestGenerator {
     private let encoder: JSONEncoder = {
         let encoder = JSONEncoder()
@@ -122,19 +109,5 @@ struct AreaWeatherListRequestGenerator {
     private struct AreasDate: Encodable {
         let areas: [String]
         let date: Date
-    }
-}
-
-struct AreaWeatherListGenerator {
-    private let decoder: JSONDecoder = {
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .formatted(dateFormatter)
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        return decoder
-    }()
-    
-    func generate(from json: String) throws -> [AreaWeather] {
-        let areaWeather = try decoder.decode([AreaWeather].self, from: Data(json.utf8))
-        return areaWeather
     }
 }
