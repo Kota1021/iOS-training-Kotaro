@@ -12,60 +12,40 @@ class FetchManager<Product> {
     init(for process: @escaping () async throws -> Product) {
         self.process = process
     }
-    
+
     private var process: () async throws -> Product
+
+    private var fetchStateMachine = FetchStateMachine<Product, Error>()
+    var isFetching: Bool { fetchStateMachine.state == .isFetching }
     
-    private var task: Task<Void, Never>? {
-        willSet { task?.cancel() }
-    }
-    
-    private(set) var isFetching = false
-
-    var fetched: Product? {
-        if case let .succeeded(weatherDateTemperature) = fetchState {
-            weatherDateTemperature
-        } else {
-            nil
-        }
-    }
-
-    var error: Error? {
-        if case let .failed(error) = fetchState {
-            error
-        } else {
-            nil
-        }
-    }
-
-    private var fetchState: FetchState = .initial
-    private enum FetchState {
-        case initial
-        case succeeded(Product)
-        case failed(Error)
-    }
+    private var task: Task<Void, Never>? { willSet { task?.cancel() } }
+    var fetched: Product? { fetchStateMachine.product }
+    var error: Error? { fetchStateMachine.error }
 
     func fetch() {
         task = Task {
-            isFetching = true
-            do {
-                let product = try await process()
-                guard !Task.isCancelled else {
-                    isFetching = false
-                    return
-                }
-                fetchState = .succeeded(product)
-            } catch {
-                guard !Task.isCancelled else {
-                    isFetching = false
-                    return
-                }
-                fetchState = .failed(error)
+            fetchStateMachine.start()
+            
+            let result = await Result { try await process() }
+            
+            if Task.isCancelled {
+                fetchStateMachine.stop()
+                return
             }
-            isFetching = false
+            
+            fetchStateMachine.finish(with: result)
         }
     }
 
-    func reset() {
-        fetchState = .initial
+    func reset() { fetchStateMachine.reset() }
+}
+
+extension Result where Failure == Swift.Error {
+  public init(catching body: () async throws -> Success) async {
+    do {
+      self = try await .success(body())
+    } catch {
+      self = .failure(error)
     }
+  }
 }
