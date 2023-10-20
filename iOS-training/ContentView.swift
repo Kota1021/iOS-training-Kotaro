@@ -31,7 +31,7 @@ struct ContentView: View {
     }
 
     private var errorMessage: String {
-        weatherFetchManager.error?.localizedDescription ?? "__"
+        error?.localizedDescription ?? "__"
     }
 
     var body: some View {
