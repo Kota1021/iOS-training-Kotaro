@@ -80,7 +80,7 @@ struct ContentView: View {
         .task {
             weatherFetchManager.fetch()
         }
-        .alert("Error", isPresented: Binding(get: { error != nil }, set: { _, _ in })) {
+        .alert("Error", isPresented: .constant(error != nil)) {
             Button("YES") { weatherFetchManager.reset() }
         } message: {
             Text(errorMessage)
