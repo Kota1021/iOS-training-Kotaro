@@ -16,7 +16,7 @@ struct WeatherAPIImpl: WeatherAPI {
             // MARK: Decoding from output JSON String
 
             let requestJSON = try WeatherRequestGenerator().generate(area: area, date: date)
-            let fetchedWeatherJSON = try YumemiWeather.fetchWeather(requestJSON) // can throw YumemiWeatherError.invalidParameterError and \.unknownError
+            let fetchedWeatherJSON = try YumemiWeather.fetchWeather(requestJSON) // may throw YumemiWeatherError.invalidParameterError and \.unknownError
             let weatherDateTemperature = try WeatherDateTemperatureGenerator().generate(from: fetchedWeatherJSON)
             return weatherDateTemperature
         }
