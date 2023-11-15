@@ -8,14 +8,14 @@
 import Foundation
 
 @Observable
-class FetchManager {
-    init(weatherAPI: WeatherAPI) {
-        self.weatherAPI = weatherAPI
+class FetchManager<Product> {
+    init(for process: @escaping () throws -> Product) {
+        self.process = process
     }
-
-    private let weatherAPI: WeatherAPI
-
-    var fetched: WeatherDateTemperature? {
+    
+    private var process: () throws -> Product
+    
+    var fetched: Product? {
         if case let .succeeded(weatherDateTemperature) = fetchState {
             weatherDateTemperature
         } else {
@@ -34,13 +34,13 @@ class FetchManager {
     private var fetchState: FetchState = .initial
     private enum FetchState {
         case initial
-        case succeeded(WeatherDateTemperature)
+        case succeeded(Product)
         case failed(Error)
     }
 
     func fetch() {
             do {
-                let weatherDateTemperature = try weatherAPI.fetchWeatherCondition(in: "tokyo", at: Date())
+                let weatherDateTemperature = try process()
                 fetchState = .succeeded(weatherDateTemperature)
             } catch {
                 fetchState = .failed(error)

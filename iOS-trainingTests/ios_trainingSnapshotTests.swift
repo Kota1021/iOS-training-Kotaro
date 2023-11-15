@@ -13,7 +13,14 @@ import XCTest
 private let referenceSize = CGSize(width: 300, height: 300)
 
 class LayoutPrototypeTests: XCTestCase {
-    private let view: UIView = UIHostingController(rootView: ContentView(weatherAPI: WeatherAPIStub(.sunny))).view
+    private let view: UIView = {
+        // Setting up weatherFetchManager
+        let fetchingMethod = { WeatherAPIStub().fetchWeatherCondition(of: .sunny) }
+        let weatherFetchManager: FetchManager<WeatherDateTemperature> = FetchManager(for: fetchingMethod)
+        weatherFetchManager.fetch()
+        return UIHostingController(rootView: ContentView(weatherFetchManager: weatherFetchManager)).view
+    }()
+    
     func testDefaultAppearance() {
         assertSnapshot(
             of: view,
