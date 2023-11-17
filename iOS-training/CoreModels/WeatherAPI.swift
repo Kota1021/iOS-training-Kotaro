@@ -7,5 +7,5 @@
 
 import Foundation
 protocol WeatherAPI {
-    func fetchWeatherCondition(in area: String, at date: Date) -> Result<WeatherDateTemperature, Error>
+    func fetchWeatherCondition(in area: String, at date: Date) throws -> WeatherDateTemperature
 }
