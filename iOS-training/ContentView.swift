@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct ContentView: View {
-    init(weatherFetchManager: FetchManager<WeatherDateTemperature>) {
+    init(weatherFetchManager: FetchTaskManager<WeatherDateTemperature>) {
         _weatherFetchManager = State(initialValue: weatherFetchManager)
     }
 
-    @State private var weatherFetchManager: FetchManager<WeatherDateTemperature>
+    @State private var weatherFetchManager: FetchTaskManager<WeatherDateTemperature>
 
     private var weatherInfo: WeatherDateTemperature? {
         weatherFetchManager.fetched
@@ -24,6 +24,10 @@ struct ContentView: View {
 
     private var maxTemperature: String {
         (weatherInfo?.maxTemperature).map(String.init) ?? "--"
+    }
+
+    private var isFetching: Bool {
+        weatherFetchManager.isFetching
     }
 
     private var error: Error? {
@@ -43,7 +47,18 @@ struct ContentView: View {
                     length / 2
                 }
                 .overlay {
-                    WeatherIcon(weatherInfo?.weatherCondition)
+                    ZStack {
+                        WeatherIcon(weatherInfo?.weatherCondition)
+                        if isFetching {
+                            ProgressView()
+                                .progressViewStyle(.circular)
+                                .padding()
+                                .background {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .foregroundStyle(.ultraThinMaterial)
+                                }
+                        }
+                    }
                 }
 
             HStack(spacing: .zero) {
@@ -89,6 +104,6 @@ struct ContentView: View {
 }
 
 #Preview {
-    let fetchingMethod = { try WeatherAPIStub().fetchWeatherCondition(of: .sunny) }
-    return ContentView(weatherFetchManager: FetchManager(for: fetchingMethod))
+    let fetchingMethod = { try await WeatherAPIStub().fetchWeatherCondition(in: "tokyo", at: Date()) }
+    return ContentView(weatherFetchManager: FetchTaskManager(for: fetchingMethod))
 }

@@ -9,7 +9,7 @@ import Foundation
 import YumemiWeather
 
 struct WeatherAPIStub: WeatherAPI {
-    func fetchWeatherCondition(in _: String, at _: Date) throws -> WeatherDateTemperature {
+    func fetchWeatherCondition(in _: String, at _: Date) async throws -> WeatherDateTemperature {
         let date = Date(timeIntervalSince1970: 0)
         let weatherDateTemperature = WeatherDateTemperature(maxTemperature: 30,
                                                             date: date,

@@ -16,7 +16,7 @@ class LayoutPrototypeTests: XCTestCase {
     private let view: UIView = {
         // Setting up weatherFetchManager
         let fetchingMethod = { WeatherAPIStub().fetchWeatherCondition(of: .sunny) }
-        let weatherFetchManager: FetchManager<WeatherDateTemperature> = FetchManager(for: fetchingMethod)
+        let weatherFetchManager: FetchTaskManager<WeatherDateTemperature> = FetchTaskManager(for: fetchingMethod)
         weatherFetchManager.fetch()
         return UIHostingController(rootView: ContentView(weatherFetchManager: weatherFetchManager)).view
     }()
