@@ -29,6 +29,17 @@ struct ContentView: View {
         error?.localizedDescription ?? "__"
     }
 
+    // You want to show the overlaid ProgressView only during the fetching process inside the Button's action, not within the List.refreshable().
+    @State private var isProgressViewDisplayed = false
+    
+    private func fetchWithProgressView() {
+        Task {
+            isProgressViewDisplayed = true
+            await weatherFetchManager.asyncFetch()
+            isProgressViewDisplayed = false
+        }
+    }
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -37,9 +48,7 @@ struct ContentView: View {
                         AreaWeatherRow(areaWeather)
                     }
                 }
-            
-                // TODO: when pulling to reflesh, hide overlayed ProgressView
-                .refreshable { weatherFetchManager.fetch() }
+                .refreshable { await weatherFetchManager.asyncFetch() }
                 .navigationDestination(for: AreaWeather.self) { areaWeather in
                     AreaWeatherDetail(weatherInfo: areaWeather.info)
                         .navigationTitle(areaWeather.area)
@@ -56,7 +65,7 @@ struct ContentView: View {
                         length / 4
                     }
                     Button("Reload") {
-                        weatherFetchManager.fetch()
+                        fetchWithProgressView()
                     }
                     .containerRelativeFrame(.horizontal) { length, _ in
                         length / 4
@@ -64,7 +73,7 @@ struct ContentView: View {
                 }
             }
             .overlay {
-                if isFetching {
+                if isFetching, isProgressViewDisplayed {
                     ProgressView()
                         .progressViewStyle(.circular)
                         .padding()
@@ -77,7 +86,7 @@ struct ContentView: View {
             .alert("Error", isPresented: .constant(error != nil)) {
                 Button("YES") {
                     weatherFetchManager.reset()
-                    weatherFetchManager.fetch()
+                    fetchWithProgressView()
                 }
             } message: {
                 Text(errorMessage)

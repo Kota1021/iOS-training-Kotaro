@@ -16,7 +16,6 @@ class FetchTaskManager<Product> {
     private var process: () async throws -> Product
     private var task: Task<Void, Never>? { willSet { task?.cancel() } }
     private var fetchStateMachine = FetchStateMachine<Product, Error>()
-    
     var isFetching: Bool { fetchStateMachine.state == .isFetching }
     var fetched: Product? { fetchStateMachine.product }
     var error: Error? { fetchStateMachine.error }
@@ -33,5 +32,10 @@ class FetchTaskManager<Product> {
         }
     }
 
+    func asyncFetch() async {
+        fetch()
+        await task?.value
+    }
+    
     func reset() { fetchStateMachine.reset() }
 }
