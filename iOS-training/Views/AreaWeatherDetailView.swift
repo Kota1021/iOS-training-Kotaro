@@ -1,5 +1,5 @@
 //
-//  AreaWeatherDetail.swift
+//  AreaWeatherDetailView.swift
 //  iOS-training
 //
 //  Created by 松本 幸太郎 on 2023/10/06.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AreaWeatherDetail: View {
+struct AreaWeatherDetailView: View {
     let weatherInfo: WeatherInfo
     var body: some View {
         VStack(alignment: .center, spacing: .zero) {
@@ -33,5 +33,5 @@ struct AreaWeatherDetail: View {
 }
 
 #Preview {
-    AreaWeatherDetail(weatherInfo: WeatherAPIStub.weatherInfo)
+    AreaWeatherDetailView(weatherInfo: WeatherAPIStub.weatherInfo)
 }

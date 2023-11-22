@@ -50,7 +50,7 @@ struct ContentView: View {
                 }
                 .refreshable { await weatherFetchManager.asyncFetch() }
                 .navigationDestination(for: AreaWeather.self) { areaWeather in
-                    AreaWeatherDetail(weatherInfo: areaWeather.info)
+                    AreaWeatherDetailView(weatherInfo: areaWeather.info)
                         .navigationTitle(areaWeather.area)
                 }
                 .navigationTitle("Cities")
