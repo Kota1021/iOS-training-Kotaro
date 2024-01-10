@@ -10,28 +10,19 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-private let referenceSize = CGSize(width: 300, height: 300)
-
 class LayoutPrototypeTests: XCTestCase {
-    private let view: UIView = {
-        // Setting up weatherFetchManager
-        let fetchingMethod = { WeatherAPIStub().fetchWeatherCondition(of: .sunny) }
-        let weatherFetchManager: FetchTaskManager<WeatherDateTemperature> = FetchTaskManager(for: fetchingMethod)
-        weatherFetchManager.fetch()
-        return UIHostingController(rootView: ContentView(weatherFetchManager: weatherFetchManager)).view
-    }()
-    
     func testDefaultAppearance() {
+        // Setting up weatherFetchManager
+        let fetchingMethod = { try await WeatherAPIStub().fetchWeatherList(in: [], at: Date()) }
+        let weatherFetchManager: FetchTaskManager<[AreaWeather]> = FetchTaskManager(for: fetchingMethod)
+        weatherFetchManager.fetch()
+        
+        let targetView = ContentView(weatherFetchManager: weatherFetchManager)
+        
         assertSnapshot(
-            of: view,
-            as: .image(size: referenceSize),
+            of: targetView,
+            as: .image(layout: .device(config: .iPhone13)),
             record: false // return true to make a new reference snapshot
         )
-    }
-}
-
-private extension SwiftUI.View {
-    func referenceFrame() -> some View {
-        frame(width: referenceSize.width, height: referenceSize.height)
     }
 }

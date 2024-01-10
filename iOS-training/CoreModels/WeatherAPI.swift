@@ -7,5 +7,6 @@
 
 import Foundation
 protocol WeatherAPI {
-    func fetchWeatherCondition(in area: String, at date: Date) async throws -> WeatherDateTemperature
+    func fetchWeatherInfo(in area: String, at date: Date) async throws -> WeatherInfo
+    func fetchWeatherList(in areas: [String], at date: Date) async throws -> [AreaWeather]
 }
